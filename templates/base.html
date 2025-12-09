@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Correios</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+    <h1>Sistema de Correios</h1>
+</header>
+<nav>
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <a href="{{ url_for('new_item') }}">Cadastrar Novo Item</a>
+    <a href="{{ url_for('report') }}">Gerar Relatório</a>
+</nav>
+<main>
+    {% block content %}{% endblock %}
+</main>
+<footer>
+    <p>&copy; 2025 Sistema de Correios</p>
+</footer>
+</body>
+</html>

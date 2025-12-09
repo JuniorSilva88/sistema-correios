@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Cadastrar novo item</h2>
+<form method="post">
+    <label>Remetente: <input type="text" name="sender"></label><br>
+    <label>Destinatário: <input type="text" name="recipient"></label><br>
+    <label>Descrição: <input type="text" name="description"></label><br>
+    <label>Tipo:
+        <select name="item_type">
+            <option>Documento</option>
+            <option>Pacote</option>
+        </select>
+    </label><br>
+    <input type="submit" value="Cadastrar">
+</form>
+{% endblock %}
