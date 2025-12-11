@@ -1,16 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Cadastrar novo item</h2>
-<form method="post">
-    <label>Remetente: <input type="text" name="sender"></label><br>
-    <label>Destinatário: <input type="text" name="recipient"></label><br>
-    <label>Descrição: <input type="text" name="description"></label><br>
-    <label>Tipo:
-        <select name="item_type">
-            <option>Documento</option>
-            <option>Pacote</option>
-        </select>
-    </label><br>
-    <input type="submit" value="Cadastrar">
-</form>
+<section>
+    <h2>Cadastrar novo item</h2>
+    <form method="post">
+        <div class="field">
+            <label for="sender">Remetente</label>
+            <input id="sender" type="text" name="sender" required>
+        </div>
+        <div class="field">
+            <label for="recipient">Destinatário</label>
+            <input id="recipient" type="text" name="recipient" required>
+        </div>
+        <div class="field">
+            <label for="description">Descrição</label>
+            <input id="description" type="text" name="description" required>
+        </div>
+        <div class="field">
+            <label for="item_type">Tipo do item</label>
+            <select id="item_type" name="item_type">
+                <option>Documento</option>
+                <option>Pacote</option>
+            </select>
+        </div>
+        <div class="actions">
+            <button type="submit">Cadastrar</button>
+            <a class="btn" href="{{ url_for('index') }}">Cancelar</a>
+        </div>
+    </form>
+</section>
 {% endblock %}

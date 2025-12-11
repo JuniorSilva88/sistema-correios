@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+    <h2>Gerar relatório</h2>
+    <form method="post">
+        <div class="field">
+            <label for="start_date">Data inicial</label>
+            <input id="start_date" type="date" name="start_date">
+        </div>
+        <div class="field">
+            <label for="end_date">Data final</label>
+            <input id="end_date" type="date" name="end_date">
+        </div>
+        <div class="field">
+            <label for="section">Seção/Destinatário</label>
+            <select id="section" name="section">
+                {% for s in sections %}
+                <option value="{{ s }}">{{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field checkbox">
+            <label><input type="checkbox" name="export_csv" value="1"> Exportar em CSV</label>
+        </div>
+        <div class="actions">
+            <button type="submit">Gerar</button>
+            <a class="btn" href="{{ url_for('index') }}">Voltar</a>
+        </div>
+    </form>
+
+    {% if items and items|length > 0 %}
+    <h3>Resultado</h3>
+    <table>
+        <tr>
+            <th>Protocolo</th>
+            <th>Descrição</th>
+            <th>Status</th>
+            <th>Remetente</th>
+            <th>Destinatário</th>
+            <th>Fechamento</th>
+        </tr>
+        {% for r in items %}
+        <tr>
+            <td>{{ r.protocol }}</td>
+            <td>{{ r.description }}</td>
+            <td>{{ r.status }}</td>
+            <td>{{ r.sender }}</td>
+            <td>{{ r.recipient }}</td>
+            <td>{{ r.closed }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</section>
+{% endblock %}

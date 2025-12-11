@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+    {% if item %}
+        <h2>Registrar saída do item {{ item.protocol }}</h2>
+        <form method="post">
+            <div class="field">
+                <label for="location">Local</label>
+                <input id="location" type="text" name="location" required>
+            </div>
+            <div class="field">
+                <label for="note">Nota</label>
+                <input id="note" type="text" name="note">
+            </div>
+            <div class="actions">
+                <button type="submit">Registrar Saída</button>
+                <a class="btn" href="{{ url_for('movements', protocol=item.protocol) }}">Voltar</a>
+            </div>
+        </form>
+    {% else %}
+        <h2>Item não encontrado</h2>
+        <p>Verifique o protocolo informado.</p>
+    {% endif %}
+</section>
+{% endblock %}

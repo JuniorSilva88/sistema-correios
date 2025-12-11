@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+    <h2>Itens cadastrados</h2>
+    {% if items and items|length > 0 %}
+    <table>
+        <tr>
+            <th>Protocolo</th>
+            <th>Descrição</th>
+            <th>Status</th>
+            <th>Remetente</th>
+            <th>Destinatário</th>
+            <th>Fechamento</th>
+            <th>Ações</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.protocol }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.status }}</td>
+            <td>{{ item.sender }}</td>
+            <td>{{ item.recipient }}</td>
+            <td>{{ item.closed }}</td>
+            <td>
+                <a class="btn" href="{{ url_for('movements', protocol=item.protocol) }}">Movimentações</a>
+                <a class="btn" href="{{ url_for('exit_item', protocol=item.protocol) }}">Registrar Saída</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p class="muted">Nenhum item cadastrado ainda.</p>
+    {% endif %}
+</section>
+{% endblock %}

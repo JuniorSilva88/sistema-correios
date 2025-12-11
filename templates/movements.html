@@ -1,5 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Movimentações do item {{ item.protocol }}</h2>
-<table>
-    <tr><th>Tipo</th><th>Local</th><th>Nota
+<section>
+    {% if item %}
+        <h2>Movimentações do item {{ item.protocol }}</h2>
+        <p><strong>Descrição:</strong> {{ item.description }}</p>
+        <p><strong>Status:</strong> {{ item.status }}</p>
+        <p><strong>Remetente:</strong> {{ item.sender }} | <strong>Destinatário:</strong> {{ item.recipient }}</p>
+        <p><strong>Fechamento:</strong> {{ item.closed }}</p>
+
+        {% if moves and moves|length > 0 %}
+        <table>
+            <tr><th>Tipo</th><th>Local</th><th>Nota</th><th>Data</th></tr>
+            {% for m in moves %}
+            <tr>
+                <td>{{ m.type }}</td>
+                <td>{{ m.location }}</td>
+                <td>{{ m.note }}</td>
+                <td>{{ m.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p class="muted">Nenhuma movimentação registrada.</p>
+        {% endif %}
+    {% else %}
+        <h2>Item não encontrado</h2>
+        <p>Verifique o protocolo informado.</p>
+    {% endif %}
+</section>
+{% endblock %}
