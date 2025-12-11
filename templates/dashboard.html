@@ -1,35 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
-<section>
-    <h2>Itens cadastrados</h2>
-    {% if items and items|length > 0 %}
+<section class="panel-card">
+  <h2>Itens cadastrados</h2>
+
+  <div class="table-container">
     <table>
+      <thead>
         <tr>
-            <th>Protocolo</th>
-            <th>Descrição</th>
-            <th>Status</th>
-            <th>Remetente</th>
-            <th>Destinatário</th>
-            <th>Fechamento</th>
-            <th>Ações</th>
+          <th>Protocolo</th>
+          <th>Descrição</th>
+          <th>Status</th>
+          <th>Remetente</th>
+          <th>Destinatário</th>
+          <th>Fechamento</th>
+          <th>Ações</th>
         </tr>
+      </thead>
+      <tbody>
         {% for item in items %}
         <tr>
-            <td>{{ item.protocol }}</td>
-            <td>{{ item.description }}</td>
-            <td>{{ item.status }}</td>
-            <td>{{ item.sender }}</td>
-            <td>{{ item.recipient }}</td>
-            <td>{{ item.closed }}</td>
-            <td>
-                <a class="btn" href="{{ url_for('movements', protocol=item.protocol) }}">Movimentações</a>
-                <a class="btn" href="{{ url_for('exit_item', protocol=item.protocol) }}">Registrar Saída</a>
-            </td>
+          <td class="nowrap">{{ item.protocol }}</td>
+          <td>{{ item.description }}</td>
+          <td class="nowrap">{{ item.status }}</td>
+          <td>{{ item.sender }}</td>
+          <td>{{ item.recipient }}</td>
+          <td class="nowrap">{{ item.closed or '' }}</td>
+          <td class="col-actions">
+            <a href="{{ url_for('movements', protocol=item.protocol) }}" class="btn-primary">Movimentações</a>
+            <a href="{{ url_for('exit_item', protocol=item.protocol) }}" class="btn-secondary">Registrar Saída</a>
+          </td>
         </tr>
         {% endfor %}
+      </tbody>
     </table>
-    {% else %}
-        <p class="muted">Nenhum item cadastrado ainda.</p>
-    {% endif %}
+  </div>
 </section>
 {% endblock %}
