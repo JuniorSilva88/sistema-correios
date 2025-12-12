@@ -9,14 +9,15 @@
 <header>
     <h1>Sistema de Correios</h1>
 </header>
-<nav>
+<nav class="navbar">
     <a href="{{ url_for('index') }}">Dashboard</a>
     <a href="{{ url_for('new_item') }}">Cadastrar Novo Item</a>
     <a href="{{ url_for('report') }}">Gerar Relatório</a>
+    <a href="{{ url_for('movimentacoes') }}">Movimentações</a>
 </nav>
-<main>
+<main class="content-container">
     {% block content %}{% endblock %}
-</main>
+  </main>
 <footer>
     <p>&copy; 2025 Sistema de Correios</p>
 </footer>

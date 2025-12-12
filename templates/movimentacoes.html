@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel-card">
+  <h2>Movimentações (Todos os Itens)</h2>
+
+  {% if movements %}
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Data/Hora</th>
+            <th>Protocolo</th>
+            <th>Descrição</th>
+            <th>Tipo</th>
+            <th>Local</th>
+            <th>Nota</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for mov in movements %}
+          <tr>
+            <td class="nowrap">{{ mov.created_at }}</td>
+            <td class="nowrap">{{ mov.protocol }}</td>
+            <td>{{ mov.description or '' }}</td>
+            <td class="nowrap">
+              {% if mov.type == "Entrada" %}
+                📥 Entrada
+              {% elif mov.type == "Saída" %}
+                📤 Saída
+              {% endif %}
+            </td>
+            <td>{{ mov.location }}</td>
+            <td>{{ mov.note or '' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>Nenhuma movimentação registrada.</p>
+  {% endif %}
+</section>
+{% endblock %}

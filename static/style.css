@@ -4,8 +4,8 @@
   --text: #f1f5f9;
   --muted: #94a3b8;
   --border: #334155;
-  --primary: #16a34a;         /* verde principal */
-  --primary-dark: #15803d;    /* verde escuro no hover */
+  --primary: #16a34a;
+  --primary-dark: #15803d;
 }
 
 body {
@@ -28,6 +28,7 @@ nav {
   display: flex;
   justify-content: center;
   gap: 24px;
+  flex-wrap: wrap;
 }
 
 nav a {
@@ -45,6 +46,8 @@ nav a:hover {
 /* Conteúdo principal */
 main {
   padding: 40px 20px;
+  max-width: 95vw;
+  margin: 0 auto;
 }
 
 /* Cartão do formulário */
@@ -83,7 +86,7 @@ main {
   padding: 12px 14px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background-color: #0f172a;
+  background-color: var(--bg);
   color: var(--text);
   font-size: 1rem;
 }
@@ -98,6 +101,7 @@ main {
   justify-content: flex-end;
   gap: 16px;
   margin-top: 32px;
+  flex-wrap: wrap;
 }
 
 .btn-primary {
@@ -135,7 +139,7 @@ main {
   padding: 36px;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0,0,0,0.25);
-  max-width: 900px;
+  max-width: 95vw;
   margin: 40px auto;
   color: var(--text);
 }
@@ -147,13 +151,18 @@ main {
 
 /* Tabelas */
 .table-container {
+  max-height: 75vh;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow-y: auto;
   overflow-x: auto;
+  border-radius: 8px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* evita quebra irregular */
+  table-layout: fixed;
   margin-top: 20px;
 }
 
@@ -162,11 +171,15 @@ th, td {
   border: 1px solid var(--border);
   text-align: left;
   vertical-align: middle;
+  word-wrap: break-word;
 }
 
 th {
-  background-color: #1e293b;
+  background-color: var(--panel);
   color: var(--muted);
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 tr:nth-child(even) {
@@ -180,13 +193,16 @@ tr:nth-child(even) {
   text-overflow: ellipsis;
 }
 
-/* Coluna de ações: botões lado a lado */
+/* Coluna de ações */
 .col-actions {
-  white-space: nowrap;
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
   align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   min-width: 240px;
 }
 
@@ -197,6 +213,8 @@ tr:nth-child(even) {
   border-radius: 10px;
   font-size: 0.95rem;
   flex-shrink: 0;
+  max-width: 120px;
+  text-align: center;
 }
 
 /* Responsividade */
@@ -206,14 +224,32 @@ tr:nth-child(even) {
     margin: 20px;
   }
 
+  .table-container {
+    max-width: 98vw;
+    max-height: 70vh;
+  }
+
+  table {
+    table-layout: auto;
+  }
+
+  th, td {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+
   .col-actions {
     flex-direction: column;
     gap: 8px;
+    min-width: unset;
   }
 
   .col-actions .btn-primary,
   .col-actions .btn-secondary {
     width: 100%;
+    max-width: unset;
     text-align: center;
+    padding: 12px;
+    font-size: 1rem;
   }
 }

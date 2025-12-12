@@ -5,56 +5,88 @@
   <form method="post">
     <div class="form-group">
       <label for="start_date">Data inicial</label>
-      <input id="start_date" type="date" name="start_date" required>
+      <input id="start_date" type="date" name="start_date">
     </div>
 
     <div class="form-group">
       <label for="end_date">Data final</label>
-      <input id="end_date" type="date" name="end_date" required>
+      <input id="end_date" type="date" name="end_date">
     </div>
 
     <div class="form-group">
       <label for="section">Seção/Destinatário</label>
-      <select id="section" name="section">
-        <option>Seção 1</option>
-        <option>Seção 2</option>
+      <select id="section" name="recipient">
+        {% for section in sections %}
+          <option value="{{ section }}">{{ section }}</option>
+        {% endfor %}
       </select>
-    </div>
-
-    <div class="form-group">
-      <label><input type="checkbox" name="export_csv"> Exportar em CSV</label>
     </div>
 
     <div class="form-actions">
       <button type="submit" class="btn-primary">Gerar</button>
-      <a href="{{ url_for('index') }}" class="btn-secondary">Voltar</a>
     </div>
   </form>
 
+  {% if items and items|length > 0 %}
+  <div class="form-actions">
+    <form method="post" action="{{ url_for('report_csv') }}" style="display:inline;">
+      <input type="hidden" name="recipient" value="{{ request.form.recipient }}">
+      <input type="hidden" name="start_date" value="{{ request.form.start_date }}">
+      <input type="hidden" name="end_date" value="{{ request.form.end_date }}">
+      <button type="submit" class="btn-secondary">Exportar CSV</button>
+    </form>
+    <button type="button" class="btn-secondary" onclick="printReport()">Imprimir resultado</button>
+  </div>
+  {% endif %}
+
   <h3>Resultado</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Protocolo</th>
-        <th>Descrição</th>
-        <th>Status</th>
-        <th>Remetente</th>
-        <th>Destinatário</th>
-        <th>Fechamento</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in report %}
-      <tr>
-        <td>{{ item.protocolo }}</td>
-        <td>{{ item.descricao }}</td>
-        <td>{{ item.status }}</td>
-        <td>{{ item.remetente }}</td>
-        <td>{{ item.destinatario }}</td>
-        <td>{{ item.fechamento or '' }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  {% if items and items|length > 0 %}
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Protocolo</th>
+          <th>Descrição</th>
+          <th>Status</th>
+          <th>Remetente</th>
+          <th>Destinatário</th>
+          <th>Fechamento</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td class="nowrap">{{ item.protocol }}</td>
+          <td>{{ item.description }}</td>
+          <td class="nowrap">{{ item.status }}</td>
+          <td>{{ item.sender }}</td>
+          <td>{{ item.recipient }}</td>
+          <td class="nowrap">
+            {% if item.closed %}
+              {{ item.closed.strftime("%d/%m/%Y %H:%M:%S") }}
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p>Nenhum resultado encontrado. Preencha os filtros e clique em Gerar.</p>
+  {% endif %}
 </section>
+
+<script>
+function printReport() {
+  var content = document.querySelector('.table-container').innerHTML;
+  var printWindow = window.open('', '', 'width=800,height=600');
+  printWindow.document.write('<html><head><title>Relatório</title>');
+  printWindow.document.write('<style>table{border-collapse:collapse;width:100%;}th,td{border:1px solid #000;padding:4px;}</style>');
+  printWindow.document.write('</head><body>');
+  printWindow.document.write(content);
+  printWindow.document.write('</body></html>');
+  printWindow.document.close();
+  printWindow.print();
+}
+</script>
 {% endblock %}

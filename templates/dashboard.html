@@ -26,8 +26,9 @@
           <td>{{ item.recipient }}</td>
           <td class="nowrap">{{ item.closed or '' }}</td>
           <td class="col-actions">
-            <a href="{{ url_for('movements', protocol=item.protocol) }}" class="btn-primary">Movimentações</a>
+            {% if item.status != "Finalizado" %}
             <a href="{{ url_for('exit_item', protocol=item.protocol) }}" class="btn-secondary">Registrar Saída</a>
+            {% endif %}
           </td>
         </tr>
         {% endfor %}
