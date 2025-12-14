@@ -1,59 +1,68 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Sistema de Correios</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-<header>
-    <h1>Sistema de Correios</h1>
-</header>
-<nav>
-  <div class="nav-links">
-    <a href="{{ url_for('index') }}">Dashboard</a>
-    <a href="{{ url_for('new_item') }}">Cadastrar Novo Item</a>
-    <a href="{{ url_for('report') }}">Gerar Relatório</a>
+  <!DOCTYPE html>
+  <html lang="pt-BR">
+  <head>
+      <meta charset="UTF-8">
+      <title>Sistema de Correios</title>
+      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+  <header>
+      <h1>Sistema de Correios</h1>
+  </header>
+  
+  <nav>
+  {# Só mostra os links principais se o usuário estiver logado #}
+  {% if current_user and current_user.is_authenticated %}
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}">Dashboard</a>
+      <a href="{{ url_for('new_item') }}">Cadastrar Novo Item</a>
+      <a href="{{ url_for('report') }}">Gerar Relatório</a>
+      {# >>> Só mostra o link Movimentações se o usuário estiver logado e for admin <<< #}
+  {% if current_user and current_user.is_authenticated and current_user.role == "admin" %}
     <a href="{{ url_for('movimentacoes') }}">Movimentações</a>
-  </div>
-<div class="nav-right">
-  {% if current_user.is_authenticated %}
-    <div class="user-menu">
-      <button class="user-button">
-        {% if current_user.role == "admin" %}
-          👑 {{ current_user.username }} ▼
-        {% else %}
-          👤 {{ current_user.username }} ▼
-        {% endif %}
-      </button>
-      <div class="dropdown">
-        <a href="{{ url_for('profile') }}">Perfil</a>
-        <a href="{{ url_for('change_password') }}">Alterar senha</a>
-        <a href="{{ url_for('logout') }}">Sair</a>
-      </div>
-    </div>
-  {% else %}
-    <a href="{{ url_for('login') }}" class="btn-secondary">Login</a>
   {% endif %}
-</div>
+    </div>
+  {% endif %}
 
+  <div class="nav-right">
+    {% if current_user and current_user.is_authenticated %}
+      <div class="user-menu">
+        <button class="user-button">
+          {% if current_user.role == "admin" %}
+            👑 {{ current_user.username }} ▼
+          {% else %}
+            👤 {{ current_user.username }} ▼
+          {% endif %}
+        </button>
+        <div class="dropdown">
+          <a href="{{ url_for('profile') }}">Perfil</a>
+          <a href="{{ url_for('change_password') }}">Alterar senha</a>
+          <a href="{{ url_for('logout') }}">Sair</a>
+        </div>
+      </div>
+    {% else %}
+      {# Usuário não logado: mostra só o botão de Login #}
+      <a href="{{ url_for('login') }}" class="btn-secondary">Login</a>
+    {% endif %}
+  </div>
 </nav>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div class="flash-messages">
-      {% for category, message in messages %}
-        <div class="flash {{ category }}">{{ message }}</div>
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
 
-<main class="content-container">
-    {% block content %}{% endblock %}
-  </main>
-<footer>
-    <p>&copy; 2025 Sistema de Correios</p>
-</footer>
-</body>
-</html>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="content-container">
+      {% block content %}{% endblock %}
+    </main>
+  <footer>
+      <p>&copy; 2025 Sistema de Correios</p>
+  </footer>
+  </body>
+  </html>

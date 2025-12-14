@@ -144,17 +144,16 @@ def exit_item(protocol):
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-
-        user = User.query.filter_by(username=username).first()
-        if user and user.check_password(password):
+        user = User.query.filter_by(username=request.form["username"]).first()
+        if user and user.check_password(request.form["password"]):
             login_user(user)
+            # >>> CORREÇÃO: url_for deve apontar para o NOME DA FUNÇÃO (index), não para o template <<<
             return redirect(url_for("index"))
         else:
-            flash("Usuário ou senha inválidos!", "error")
-            return redirect(url_for("login"))
+            flash("Usuário ou senha inválidos", "error")  # <<< opcional: categoria para estilo
     return render_template("login.html")
+
+
 
 @app.route("/create_user", methods=["GET", "POST"])
 @admin_required
