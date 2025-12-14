@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, Response, abort, flash
+from flask import Flask, render_template, request, redirect, url_for, Response, abort, flash, session
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from functools import wraps
@@ -16,6 +16,7 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'seuemail@dominio.com'
 app.config['MAIL_PASSWORD'] = 'suasenha'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # ⏳ 30 minutos de inatividade
 
 mail = Mail(app)
 db = SQLAlchemy(app)
@@ -42,12 +43,17 @@ def admin_required(f):
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)  # novo campo
+    email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(20), default="user")  # "user" ou "admin"
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        # 🔐 usa pbkdf2:sha256 com salt e 260 mil iterações
+        self.password_hash = generate_password_hash(
+            password,
+            method='pbkdf2:sha256',
+            salt_length=16
+        )
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -110,56 +116,34 @@ def new_item():
 
         db.session.commit()
         return redirect(url_for("index"))
+
     return render_template("new_item.html")
 
-@app.route("/movements/<protocol>")
-@login_required
-def movements(protocol):
-    item = Item.query.filter_by(protocol=protocol).first()
-    item_moves = Movement.query.filter_by(protocol=protocol).all()
-    return render_template("movements.html", item=item, moves=item_moves)
-
 @app.route("/movimentacoes")
-@admin_required
+@admin_required   # 👑 Apenas administradores podem acessar
 def movimentacoes():
     movements = Movement.query.all()
     return render_template("movimentacoes.html", movements=movements)
 
-@app.route("/exit_item/<protocol>", methods=["GET", "POST"])
-@login_required
-def exit_item(protocol):
-    item = Item.query.filter_by(protocol=protocol).first()
-    if request.method == "POST" and item:
-        timestamp = datetime.now()
-
-        move = Movement(
-            protocol=protocol,
-            type="Saída",
-            location=request.form["location"],
-            note=request.form["note"],
-            created_at=timestamp
-        )
-        db.session.add(move)
-
-        item.status = "Finalizado"
-        item.closed = timestamp
-
-        db.session.commit()
-        return redirect(url_for("index"))
-    return render_template("exit_item.html", item=item)
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        user = User.query.filter_by(username=request.form["username"]).first()
-        if user and user.check_password(request.form["password"]):
-            login_user(user)
-            # >>> CORREÇÃO: url_for deve apontar para o NOME DA FUNÇÃO (index), não para o template <<<
+        login_input = request.form["username"]  # pode ser username ou email
+        password = request.form["password"]
+
+        # tenta buscar por username ou email
+        user = User.query.filter(
+            (User.username == login_input) | (User.email == login_input)
+        ).first()
+
+        if user and user.check_password(password):
+            login_user(user, remember=True)  # cria sessão permanente
+            session.permanent = True         # ativa controle de expiração
             return redirect(url_for("index"))
         else:
-            flash("Usuário ou senha inválidos", "error")  # <<< opcional: categoria para estilo
-    return render_template("login.html")
+            flash("Usuário/e-mail ou senha inválidos", "error")
 
+    return render_template("login.html")
 
 @app.route("/create_user", methods=["GET", "POST"])
 @admin_required
@@ -186,6 +170,8 @@ def create_user():
     users = User.query.all()
     return render_template("create_user.html", users=users)
 
+    users = User.query.all()
+    return render_template("create_user.html", users=users)
 
 @app.route("/edit_user/<int:user_id>", methods=["GET", "POST"])
 @admin_required   # <<< Apenas admin pode editar outros usuários
