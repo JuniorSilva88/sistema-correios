@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-card">
+  <h2>Perfil do Usuário</h2>
+
+  <div class="form-group">
+    <label>Usuário:</label>
+    <input type="text" value="{{ user.username }}" readonly>
+  </div>
+
+  <div class="form-group">
+    <label>Email:</label>
+    <input type="text" value="📧 {{ user.email }}" readonly>
+  </div>
+
+  <div class="form-group">
+    <label>Função:</label>
+    {% if user.role == "admin" %}
+      <input type="text" value="👑 Administrador" readonly>
+    {% else %}
+      <input type="text" value="👤 Usuário" readonly>
+    {% endif %}
+  </div>
+
+  <div class="form-actions">
+    {% if user.role == "admin" %}
+      <a href="{{ url_for('create_user') }}" class="btn-primary">Criar Usuário</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-card">
+  <h2>Criar Usuário</h2>
+  <form method="post">
+    <div class="form-group">
+      <label for="username">Usuário</label>
+      <input id="username" name="username" type="text" placeholder="Digite o nome do usuário" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">E-mail</label>
+      <input id="email" name="email" type="email" placeholder="Digite o e-mail" required>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Senha</label>
+      <input id="password" name="password" type="password" placeholder="Digite a senha" required>
+    </div>
+
+    <div class="form-group">
+      <label for="role">Função</label>
+      <select id="role" name="role">
+        <option value="user" selected>👤 Usuário</option>
+        <option value="admin">👑 Administrador</option>
+      </select>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Criar</button>
+      <a href="{{ url_for('profile') }}" class="btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

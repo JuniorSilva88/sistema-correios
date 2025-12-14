@@ -3,7 +3,7 @@
 <section class="panel-card">
   <h2>Itens cadastrados</h2>
 
-  <div class="table-container">
+    <div class="table-container">
     <table>
       <thead>
         <tr>
@@ -24,7 +24,11 @@
           <td class="nowrap">{{ item.status }}</td>
           <td>{{ item.sender }}</td>
           <td>{{ item.recipient }}</td>
-          <td class="nowrap">{{ item.closed or '' }}</td>
+          <td class="nowrap">
+            {% if item.closed %}
+              {{ item.closed.strftime("%Y-%m-%d %H:%M:%S") }}
+            {% endif %}
+          </td>
           <td class="col-actions">
             {% if item.status != "Finalizado" %}
             <a href="{{ url_for('exit_item', protocol=item.protocol) }}" class="btn-secondary">Registrar Saída</a>
