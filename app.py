@@ -5,12 +5,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from functools import wraps
 from flask_migrate import Migrate
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///correios.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = "segredo"  # necessário para sessões do Flask-Login
+app.config['MAIL_SERVER'] = 'smtp.seuprovedor.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'seuemail@dominio.com'
+app.config['MAIL_PASSWORD'] = 'suasenha'
 
+mail = Mail(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db) 
 
@@ -154,7 +161,6 @@ def login():
     return render_template("login.html")
 
 
-
 @app.route("/create_user", methods=["GET", "POST"])
 @admin_required
 def create_user():
@@ -177,7 +183,73 @@ def create_user():
         flash("Usuário criado com sucesso!", "success")
         return redirect(url_for("create_user"))
 
-    return render_template("create_user.html")
+    users = User.query.all()
+    return render_template("create_user.html", users=users)
+
+
+@app.route("/edit_user/<int:user_id>", methods=["GET", "POST"])
+@admin_required   # <<< Apenas admin pode editar outros usuários
+def edit_user(user_id):
+    user = User.query.get_or_404(user_id)
+
+    if request.method == "POST":
+        # Atualiza os campos
+        user.email = request.form["email"]
+        user.role = request.form["role"]
+
+        # Se o admin quiser alterar a senha
+        if request.form.get("password"):
+            user.set_password(request.form["password"])
+
+        db.session.commit()
+        flash("Usuário atualizado com sucesso!", "success")
+        return redirect(url_for("create_user"))  # volta para lista de usuários
+
+    return render_template("edit_user.html", user=user)
+
+@app.route("/delete_user/<int:user_id>", methods=["POST"])
+@admin_required
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+
+    # Impede que o admin exclua a si mesmo
+    if user.id == current_user.id:
+        flash("Você não pode excluir a si mesmo!", "error")
+        return redirect(url_for("create_user"))
+
+    db.session.delete(user)
+    db.session.commit()
+    flash("Usuário excluído com sucesso!", "success")
+    return redirect(url_for("create_user"))
+
+@app.route("/reset_password_request", methods=["GET", "POST"])
+def reset_password_request():
+    if request.method == "POST":
+        email = request.form["email"]
+        user = User.query.filter_by(email=email).first()
+        if user:
+            token = generate_password_hash(str(user.id) + str(datetime.now()))
+            # Aqui você salvaria o token em uma tabela ou cache
+            msg = Message("Reset de senha - Sistema de Correios",
+                          sender="seuemail@dominio.com",
+                          recipients=[user.email])
+            msg.body = f"Olá, clique no link para resetar sua senha: http://localhost:5000/reset_password/{user.id}"
+            mail.send(msg)
+            flash("E-mail de reset enviado!", "success")
+        else:
+            flash("E-mail não encontrado!", "error")
+    return render_template("reset_password_request.html")
+
+@app.route("/reset_password/<int:user_id>", methods=["GET", "POST"])
+def reset_password(user_id):
+    user = User.query.get_or_404(user_id)
+    if request.method == "POST":
+        new_password = request.form["new_password"]
+        user.set_password(new_password)
+        db.session.commit()
+        flash("Senha redefinida com sucesso!", "success")
+        return redirect(url_for("login"))
+    return render_template("reset_password.html", user=user)
 
 
 @app.route("/logout")

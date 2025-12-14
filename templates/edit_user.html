@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-card">
+  <h2>Editar Usuário</h2>
+  <form method="post">
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" name="email" value="{{ user.email }}" required>
+    </div>
+
+    <div class="form-group">
+      <label>Função</label>
+      <select name="role">
+        <option value="user" {% if user.role == "user" %}selected{% endif %}>Usuário</option>
+        <option value="admin" {% if user.role == "admin" %}selected{% endif %}>Admin</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Nova senha (opcional)</label>
+      <input type="password" name="password" placeholder="Digite nova senha">
+    </div>
+
+    <button type="submit" class="btn-primary">Salvar alterações</button>
+  </form>
+</section>
+{% endblock %}
