@@ -74,11 +74,12 @@ class Item(db.Model):
 
 class Movement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    protocol = db.Column(db.String(20), db.ForeignKey('item.protocol'))
-    type = db.Column(db.String(20))  # Entrada ou Saída
+    protocol = db.Column(db.String(50), nullable=False)
+    type = db.Column(db.String(20), nullable=False)  # Entrada ou Saída
     location = db.Column(db.String(100))
     note = db.Column(db.String(200))
     created_at = db.Column(db.DateTime, default=datetime.now)
+    user = db.Column(db.String(50), nullable=False)  # Novo campo: usuário responsável
 
 # ---------------------------
 # Rotas
@@ -93,15 +94,13 @@ def index():
 @login_required
 def new_item():
     if request.method == "POST":
-        protocol = f"{datetime.now().year}-{Item.query.count()+1:04d}"
-
+        protocol = str(uuid.uuid4())[:8]
         item = Item(
             protocol=protocol,
             sender=request.form["sender"],
             recipient=request.form["recipient"],
             description=request.form["description"],
-            status="Em trânsito",
-            closed=None
+            status="Em trânsito"
         )
         db.session.add(item)
 
@@ -109,15 +108,18 @@ def new_item():
             protocol=protocol,
             type="Entrada",
             location="Cadastro inicial",
-            note="",
-            created_at=datetime.now()
+            note="Item cadastrado",
+            created_at=datetime.now(),
+            user=current_user.username  # grava quem fez
         )
         db.session.add(move)
-
         db.session.commit()
+
+        flash("Item cadastrado com sucesso!", "success")
         return redirect(url_for("index"))
 
     return render_template("new_item.html")
+
 
 @app.route("/exit_item/<protocol>", methods=["GET", "POST"])
 @login_required
@@ -125,16 +127,16 @@ def exit_item(protocol):
     item = Item.query.filter_by(protocol=protocol).first_or_404()
 
     if request.method == "POST":
-        # Atualiza status e fecha o item
         item.status = "Finalizado"
         item.closed = datetime.now()
 
         move = Movement(
             protocol=protocol,
             type="Saída",
-            location="Saída registrada",
+            location=request.form["location"],
             note=request.form.get("note", ""),
-            created_at=datetime.now()
+            created_at=datetime.now(),
+            user=current_user.username  # grava quem fez
         )
         db.session.add(move)
         db.session.commit()

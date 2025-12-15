@@ -51,6 +51,9 @@
           <th>Remetente</th>
           <th>Destinatário</th>
           <th>Fechamento</th>
+          {% if current_user.username == "admin" %}
+            <th>Usuário</th>
+          {% endif %}
         </tr>
       </thead>
       <tbody>
@@ -66,6 +69,9 @@
               {{ item.closed.strftime("%d/%m/%Y %H:%M:%S") }}
             {% endif %}
           </td>
+          {% if current_user.username == "admin" %}
+            <td>{{ item.user }}</td>
+          {% endif %}
         </tr>
         {% endfor %}
       </tbody>
