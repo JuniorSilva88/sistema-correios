@@ -119,6 +119,32 @@ def new_item():
 
     return render_template("new_item.html")
 
+@app.route("/exit_item/<protocol>", methods=["GET", "POST"])
+@login_required
+def exit_item(protocol):
+    item = Item.query.filter_by(protocol=protocol).first_or_404()
+
+    if request.method == "POST":
+        # Atualiza status e fecha o item
+        item.status = "Finalizado"
+        item.closed = datetime.now()
+
+        move = Movement(
+            protocol=protocol,
+            type="Saída",
+            location="Saída registrada",
+            note=request.form.get("note", ""),
+            created_at=datetime.now()
+        )
+        db.session.add(move)
+        db.session.commit()
+
+        flash("Saída registrada com sucesso!", "success")
+        return redirect(url_for("index"))
+
+    return render_template("exit_item.html", item=item)
+
+
 @app.route("/movimentacoes")
 @admin_required   # 👑 Apenas administradores podem acessar
 def movimentacoes():
