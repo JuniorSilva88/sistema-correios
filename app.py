@@ -6,6 +6,7 @@ from flask_login import UserMixin, LoginManager, login_user, logout_user, login_
 from functools import wraps
 from flask_migrate import Migrate
 from flask_mail import Mail, Message
+import uuid 
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///correios.db'
@@ -33,7 +34,8 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated or current_user.role != "admin":
-            abort(403)  # acesso negado
+            flash("Acesso restrito a administradores.", "error")
+            return redirect(url_for("index"))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -145,6 +147,22 @@ def exit_item(protocol):
         return redirect(url_for("index"))
 
     return render_template("exit_item.html", item=item)
+
+@app.route("/create_admin")
+def create_admin():
+    # verifica se já existe admin
+    existing_admin = User.query.filter_by(username="admin").first()
+    if existing_admin:
+        return "⚠️ Usuário admin já existe!", 400
+
+    # cria novo admin
+    admin = User(username="admin", email="admin@dominio.com", role="admin")
+    admin.set_password("1234")  # senha padrão
+
+    db.session.add(admin)
+    db.session.commit()
+
+    return "✅ Usuário admin criado com sucesso! Login: admin / Senha: 1234"
 
 
 @app.route("/movimentacoes")

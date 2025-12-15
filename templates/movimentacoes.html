@@ -8,31 +8,33 @@
       <table>
         <thead>
           <tr>
-            <th>Data/Hora</th>
-            <th>Protocolo</th>
-            <th>Descrição</th>
-            <th>Tipo</th>
-            <th>Local</th>
-            <th>Nota</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for mov in movements %}
-          <tr>
-            <td class="nowrap">{{ mov.created_at }}</td>
-            <td class="nowrap">{{ mov.protocol }}</td>
-            <td>{{ mov.description or '' }}</td>
-            <td class="nowrap">
-              {% if mov.type == "Entrada" %}
-                📥 Entrada
-              {% elif mov.type == "Saída" %}
-                📤 Saída
-              {% endif %}
-            </td>
-            <td>{{ mov.location }}</td>
-            <td>{{ mov.note or '' }}</td>
-          </tr>
-          {% endfor %}
+              <th>Data/Hora</th>
+              <th>Protocolo</th>
+              <th>Descrição</th>
+              <th>Tipo</th>
+              <th>Local</th>
+              <th>Nota</th>
+              <th>Usuário</th>  <!-- ✅ Corrigido -->
+            </tr>
+          </thead>
+          <tbody>
+            {% for mov in movements %}
+            <tr>
+              <td class="nowrap">{{ mov.created_at.strftime("%d/%m/%Y %H:%M:%S") }}</td>
+              <td class="nowrap">{{ mov.protocol }}</td>
+              <td>{{ mov.description or '' }}</td>
+              <td class="nowrap">
+                {% if mov.type == "Entrada" %}
+                  📥 Entrada
+                {% elif mov.type == "Saída" %}
+                  📤 Saída
+                {% endif %}
+              </td>
+              <td>{{ mov.location }}</td>
+              <td>{{ mov.note or '' }}</td>
+              <td>{{ mov.user }}</td>  <!-- ✅ Adicionado -->
+            </tr>
+            {% endfor %}
         </tbody>
       </table>
     </div>
