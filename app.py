@@ -166,10 +166,33 @@ def create_admin():
 
 
 @app.route("/movimentacoes")
-@admin_required   # 👑 Apenas administradores podem acessar
+@login_required
 def movimentacoes():
-    movements = Movement.query.all()
-    return render_template("movimentacoes.html", movements=movements)
+    query = Movement.query
+
+    # filtro por usuário
+    user_filter = request.args.get("user")
+    if user_filter:
+        query = query.filter_by(user=user_filter)
+
+    # filtro por tipo
+    type_filter = request.args.get("type")
+    if type_filter:
+        query = query.filter_by(type=type_filter)
+
+    # filtro por período
+    start = request.args.get("start")
+    end = request.args.get("end")
+    if start:
+        query = query.filter(Movement.created_at >= start)
+    if end:
+        query = query.filter(Movement.created_at <= end)
+
+    movements = query.order_by(Movement.created_at.desc()).all()
+    users = User.query.all()  # para popular o select
+
+    return render_template("movimentacoes.html", movements=movements, users=users)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

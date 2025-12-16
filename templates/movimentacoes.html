@@ -3,6 +3,8 @@
 <section class="panel-card">
   <h2>Movimentações (Todos os Itens)</h2>
 
+  <form method="GET" action="{{ url_for('movimentacoes') }}" class="filter-form"> <label for="user">Usuário:</label> <select name="user"> <option value="">Todos</option> {% for u in users %} <option value="{{ u.username }}" {% if request.args.get('user') == u.username %}selected{% endif %}> {{ u.username }} </option> {% endfor %} </select> <label for="type">Tipo:</label> <select name="type"> <option value="">Todos</option> <option value="Entrada" {% if request.args.get('type') == 'Entrada' %}selected{% endif %}>Entrada</option> <option value="Saída" {% if request.args.get('type') == 'Saída' %}selected{% endif %}>Saída</option> </select> <label for="start">De:</label> <input type="date" name="start" value="{{ request.args.get('start','') }}"> <label for="end">Até:</label> <input type="date" name="end" value="{{ request.args.get('end','') }}"> <button type="submit">Filtrar</button> </form>
+
   {% if movements %}
     <div class="table-container">
       <table>
@@ -14,7 +16,7 @@
               <th>Tipo</th>
               <th>Local</th>
               <th>Nota</th>
-              <th>Usuário</th>  <!-- ✅ Corrigido -->
+              <th>Usuário</th> 
             </tr>
           </thead>
           <tbody>
@@ -23,16 +25,10 @@
               <td class="nowrap">{{ mov.created_at.strftime("%d/%m/%Y %H:%M:%S") }}</td>
               <td class="nowrap">{{ mov.protocol }}</td>
               <td>{{ mov.description or '' }}</td>
-              <td class="nowrap">
-                {% if mov.type == "Entrada" %}
-                  📥 Entrada
-                {% elif mov.type == "Saída" %}
-                  📤 Saída
-                {% endif %}
-              </td>
-              <td>{{ mov.location }}</td>
-              <td>{{ mov.note or '' }}</td>
-              <td>{{ mov.user }}</td>  <!-- ✅ Adicionado -->
+              <td class="{% if mov.type == 'Entrada' %}entrada{% else %}saida{% endif %}"> {% if mov.type == "Entrada" %} 📥 Entrada {% else %} 📤 Saída {% endif %} </td>
+              <td>{{ mov.location }}</td> 
+              <td>{{ mov.note or '' }}</td> 
+              <td>{{ mov.user }}</td> 
             </tr>
             {% endfor %}
         </tbody>
