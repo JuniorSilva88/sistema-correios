@@ -1,56 +1,79 @@
-📬 Sistema Correios
-Aplicação desenvolvida em Python 3 + Flask + SQLAlchemy para controle interno de documentos e pacotes.
+📄 README.md ajustado
+
+# 📬 Sistema Correios
+
+Aplicação desenvolvida em **Python 3 + Flask + SQLAlchemy** para controle interno de documentos e pacotes.  
 Permite cadastrar itens, acompanhar movimentações, registrar saídas e gerar relatórios filtrados por datas e seções.
 
-🚀 Como rodar o projeto
+---
 
+## 🚀 Como rodar o projeto
 
-Clone o repositório:
-git clone https://github.com/JuniorSilva88/sistema-correios.gitcd sistema-correios
+### 1. Clone o repositório
+```bash
+git clone https://github.com/JuniorSilva88/sistema-correios.git
+cd sistema-correios
 
+2. Crie e ative o ambiente virtual
 
-Crie e ative o ambiente virtual:
-python3 -m venv venvsource venv/bin/activate
+python3 -m venv venv
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
 
+3. Instale as dependências
 
-Instale as dependências:
 pip install flask flask_sqlalchemy
 
+4. Inicie o servidor
 
-Inicie o servidor:
-``bash
 python3 app.py
 
+🌐 Como acessar
 
-Abra no navegador:
-Inicializar banco: http://127.0.0.1:5000/init
-Dashboard: http://127.0.0.1:5000/
+Após iniciar o servidor, abra o navegador e acesse:
 
+Inicializar banco de dados:http://127.0.0.1:5000/init
+
+Dashboard principal:http://127.0.0.1:5000/
 
 📂 Estrutura do projeto
- 
-  Sistema Correios/
+
+Sistema Correios/
  ├── app.py                # Código principal Flask
  ├── templates/            # Templates HTML
  │   ├── base.html
  │   ├── index.html
  │   ├── new_item.html
- │   ├── movements.html
+ │   ├── movimentacoes.html
  │   ├── exit_item.html 
  │   └── report.html
  └── static/               # Arquivos estáticos (CSS, imagens)
-    └── style.css
+     └── style.css
 
 ✨ Funcionalidades
+
 Dashboard: lista todos os itens cadastrados com status e ações.
 
 Cadastro de itens: gera protocolo automático e registra entrada.
 
-Movimentações: histórico de entradas e saídas de cada item.
+Movimentações: histórico de entradas e saídas de cada item, com filtros por usuário, tipo e período.
 
 Saída de itens: marca como entregue e fecha protocolo.
 
 Relatórios: filtro por datas e seções, exportação em CSV.
 
 👨‍💻 Autor
-Projeto desenvolvido por Júnior Alexandre da Silva GitHub: @JuniorSilva88
+
+Projeto desenvolvido por Júnior Alexandre da SilvaGitHub: @JuniorSilva88
+
+
+---
+
+## 🎯 O que mudou
+- Corrigi os blocos de código para ficarem consistentes (`bash`).  
+- Adicionei instruções para ativar o ambiente virtual tanto em Linux/Mac quanto em Windows.  
+- Padronizei o nome do template `movimentacoes.html`.  
+- Criei a seção **Como acessar**, com links diretos para inicializar o banco e abrir o dashboard.  
+- Atualizei a lista de funcionalidades para incluir os filtros que implementamos.  
+
+---
