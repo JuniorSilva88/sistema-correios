@@ -40,24 +40,24 @@ Funcionalidades principais: cadastro de itens, movimentações (entradas/saídas
 
 | Área           | Melhoria                                                                 | Status      | Observações                                                                 |
 |----------------|--------------------------------------------------------------------------|-------------|------------------------------------------------------------------------------|
-| Funcionalidade | **Filtros em movimentações por usuário, tipo e período**                 | **Feito**   | Implementado no template `movimentacoes.html`                                |
-| Funcionalidade | **Campo "Usuário" na tabela de movimentações**                           | **Feito**   | Agora aparece junto às entradas/saídas                                       |
-| Funcionalidade | Busca avançada por protocolo, remetente, destinatário ou descrição       | Pendente    | Pode ser implementada com query dinâmica no SQLAlchemy                       |
-| Funcionalidade | Exportação em PDF além de CSV                                            | Pendente    | Usar biblioteca como ReportLab ou WeasyPrint                                 |
-| Funcionalidade | Notificações visuais/sonoras ao mudar status                             | Pendente    | Pode ser feito com JavaScript + alertas                                      |
-| Funcionalidade | Histórico detalhado de cada item                                         | Pendente    | Criar tabela de log de movimentações                                         |
-| Interface      | **Padronização completa dos botões (verde, vermelho, azul, cinza)**      | **Feito**   | Implementado em `style.css`                                                  |
-| Interface      | **Botão "Registrar Saída" padronizado (fundo escuro, letras verdes)**    | **Feito**   | Ajustado em `index.html`                                                     |
-| Interface      | Responsividade total para celular/tablet                                 | Pendente    | Ajustar CSS com media queries                                                |
-| Interface      | Ícones visuais (📥 entrada, 📤 saída, ✅ finalizado)                      | Pendente    | Adicionar ícones FontAwesome ou similares                                    |
-| Interface      | Feedback visual (animação/destaque ao registrar ação)                    | Pendente    | Usar CSS transitions ou JS                                                   |
-| Segurança      | Autenticação por níveis (admin, usuário comum)                           | Pendente    | Implementar roles no Flask-Login                                             |
-| Segurança      | Logs de auditoria (quem fez cada ação)                                   | Pendente    | Criar tabela de auditoria                                                    |
-| Segurança      | Backup automático do banco                                               | Pendente    | Script cron ou integração com ferramenta externa                             |
-| Documentação   | **README atualizado com instruções claras e seção "Como acessar"**       | **Feito**   | Inclui links para init e dashboard                                           |
-| Documentação   | **CHANGELOG.md inicial criado**                                          | **Feito**   | Versão 1.1.0 documentando filtros e CSS                                      |
-| Documentação   | Guia rápido de uso (fluxo: cadastrar → saída → relatório)                | Pendente    | Adicionar no README                                                          |
-| Documentação   | RELATORIO.md consolidando evolução                                       | Pendente    | Pode ser criado para histórico textual                                       |
+| Funcionalidade | **Filtros em movimentações por usuário, tipo e período**                 | **Feito**✅  | Implementado no template `movimentacoes.html`                                |
+| Funcionalidade | **Campo "Usuário" na tabela de movimentações**                           | **Feito**✅  | Agora aparece junto às entradas/saídas                                       |
+| Funcionalidade | Busca avançada por protocolo, remetente, destinatário ou descrição       | Pendente⏳   | Pode ser implementada com query dinâmica no SQLAlchemy                       |
+| Funcionalidade | Exportação em PDF além de CSV                                            | Pendente⏳ | Usar biblioteca como ReportLab ou WeasyPrint                                 |
+| Funcionalidade | Notificações visuais/sonoras ao mudar status                             | Pendente⏳ | Pode ser feito com JavaScript + alertas                                      |
+| Funcionalidade | Histórico detalhado de cada item                                         | Pendente⏳    | Criar tabela de log de movimentações                                         |
+| Interface      | **Padronização completa dos botões (verde, vermelho, azul, cinza)**      | **Feito**✅   | Implementado em `style.css`                                                  |
+| Interface      | **Botão "Registrar Saída" padronizado (fundo escuro, letras verdes)**    | **Feito**✅   | Ajustado em `index.html`                                                     |
+| Interface      | Responsividade total para celular/tablet                                 | Pendente⏳    | Ajustar CSS com media queries                                                |
+| Interface      | Ícones visuais (📥 entrada, 📤 saída, ✅ finalizado)                      | Pendente⏳   | Adicionar ícones FontAwesome ou similares                                    |
+| Interface      | Feedback visual (animação/destaque ao registrar ação)                    | Pendente⏳   | Usar CSS transitions ou JS                                                   |
+| Segurança      | Autenticação por níveis (admin, usuário comum)                           | Pendente⏳   | Implementar roles no Flask-Login                                             |
+| Segurança      | Logs de auditoria (quem fez cada ação)                                   | Pendente⏳   | Criar tabela de auditoria                                                    |
+| Segurança      | Backup automático do banco                                               | Pendente⏳   | Script cron ou integração com ferramenta externa                             |
+| Documentação   | **README atualizado com instruções claras e seção "Como acessar"**       | **Feito**✅   | Inclui links para init e dashboard                                           |
+| Documentação   | **CHANGELOG.md inicial criado**                                          | **Feito**✅   | Versão 1.1.0 documentando filtros e CSS                                      |
+| Documentação   | Guia rápido de uso (fluxo: cadastrar → saída → relatório)                | Pendente⏳   | Adicionar no README                                                          |
+| Documentação   | RELATORIO.md consolidando evolução                                       | Pendente⏳   | Pode ser criado para histórico textual                                       |
 
 ---
 
