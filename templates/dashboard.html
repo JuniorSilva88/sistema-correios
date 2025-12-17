@@ -29,7 +29,7 @@
               {{ item.closed.strftime("%Y-%m-%d %H:%M:%S") }}
             {% endif %}
           </td>
-          <<td class="col-actions">
+          <td class="col-actions">
               {% if item.status != "Finalizado" %}
                 <a href="{{ url_for('exit_item', protocol=item.protocol) }}" class="btn-out">Registrar Saída</a>
               {% else %}
