@@ -121,6 +121,20 @@ a.btn-out, a.btn-in, a.btn-info {
   display: inline-block;
 }
 
+/* Efeitos de interação nos botões */
+.btn-out, .btn-secondary {
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.btn-out:active, .btn-secondary:active {
+  transform: scale(0.95);
+}
+
+.btn-out:hover {
+  background-color: var(--primary);
+  color: #fff;
+}
+
 /* Verde (Entrada, Confirmar, Salvar) */
 .btn-primary, a.btn-primary, a.btn-in, .filter-form button {
   background-color: var(--primary); color: #fff; border: none;
@@ -207,10 +221,56 @@ tr:nth-child(even) { background-color: #1c2536; }
   border: 1px solid var(--border);
   border-radius: 8px; color: var(--text);
 }
-.filter-form label { font-weight: bold; color: var(--muted); margin-right: 0.5rem; }
-.filter-form select, .filter-form input[type="date"] {
-  padding: 8px 12px; border: 1px solid var(--border);
-  border-radius: 6px; background-color: var(--bg);
-  color: var(--text); font-size: 0.95rem;
+
+/* Formulário de filtros */
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
 }
-.filter-form
+
+.filter-form label {
+  font-weight: bold;
+  color: var(--muted);
+  margin-right: 0.5rem;
+}
+
+.filter-form select,
+.filter-form input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+/* Ajuste para telas menores que 768px */
+@media (max-width: 768px) {
+  .table-container {
+    overflow-x: auto;
+    display: block;
+  }
+
+  table {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  th, td {
+    padding: 6px;
+  }
+
+  .col-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+}

@@ -30,12 +30,17 @@
             {% endif %}
           </td>
           <td class="col-actions">
-              {% if item.status != "Finalizado" %}
-                <a href="{{ url_for('exit_item', protocol=item.protocol) }}" class="btn-out">Registrar Saída</a>
-              {% else %}
-                <a class="btn-secondary" aria-disabled="true">Finalizado</a>
-              {% endif %}
-            </td>
+            {% if item.status != "Finalizado" %}
+              <a href="{{ url_for('exit_item', protocol=item.protocol) }}" class="btn-out">
+                <i class="fa-solid fa-box-arrow-right"></i> Registrar Saída
+              </a>
+            {% else %}
+              <a class="btn-secondary" aria-disabled="true">
+                <i class="fa-solid fa-check"></i> Finalizado
+              </a>
+            {% endif %}
+        </td>
+
         </tr>
         {% endfor %}
       </tbody>

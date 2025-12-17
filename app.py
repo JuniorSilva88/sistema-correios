@@ -129,6 +129,12 @@ def exit_item(protocol):
     item = Item.query.filter_by(protocol=protocol).first_or_404()
 
     if request.method == "POST":
+        # Validação: só permite saída se o item tiver destinatário registrado
+        if not item.recipient:
+            flash("Item sem destinatário registrado na entrada.", "error")
+            return redirect(url_for("exit_item", protocol=protocol))
+
+        # Registro da saída
         item.status = "Finalizado"
         item.closed = datetime.now()
 
@@ -138,7 +144,7 @@ def exit_item(protocol):
             location=request.form["location"],
             note=request.form.get("note", ""),
             created_at=datetime.now(),
-            user=current_user.username  # grava quem fez
+            user=current_user.username
         )
         db.session.add(move)
         db.session.commit()
@@ -147,6 +153,7 @@ def exit_item(protocol):
         return redirect(url_for("index"))
 
     return render_template("exit_item.html", item=item)
+
 
 @app.route("/create_admin")
 def create_admin():

@@ -1,41 +1,82 @@
 {% extends "base.html" %}
+
 {% block content %}
 <section class="panel-card">
   <h2>Movimentações (Todos os Itens)</h2>
 
-  <form method="GET" action="{{ url_for('movimentacoes') }}" class="filter-form"> <label for="user">Usuário:</label> <select name="user"> <option value="">Todos</option> {% for u in users %} <option value="{{ u.username }}" {% if request.args.get('user') == u.username %}selected{% endif %}> {{ u.username }} </option> {% endfor %} </select> <label for="type">Tipo:</label> <select name="type"> <option value="">Todos</option> <option value="Entrada" {% if request.args.get('type') == 'Entrada' %}selected{% endif %}>Entrada</option> <option value="Saída" {% if request.args.get('type') == 'Saída' %}selected{% endif %}>Saída</option> </select> <label for="start">De:</label> <input type="date" name="start" value="{{ request.args.get('start','') }}"> <label for="end">Até:</label> <input type="date" name="end" value="{{ request.args.get('end','') }}"> <button type="submit">Filtrar</button> </form>
+  <!-- Formulário de filtros -->
+  <form method="GET" action="{{ url_for('movimentacoes') }}" class="filter-form">
+    <label for="usuario">Usuário:</label>
+    <select name="usuario" id="usuario">
+      <option value="">Todos</option>
+      {% for user in users %}
+        <option value="{{ user }}" {% if request.args.get('usuario') == user %}selected{% endif %}>
+          {{ user }}
+        </option>
+      {% endfor %}
+    </select>
 
-  {% if movements %}
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-              <th>Data/Hora</th>
-              <th>Protocolo</th>
-              <th>Descrição</th>
-              <th>Tipo</th>
-              <th>Local</th>
-              <th>Nota</th>
-              <th>Usuário</th> 
-            </tr>
-          </thead>
-          <tbody>
-            {% for mov in movements %}
-            <tr>
-              <td class="nowrap">{{ mov.created_at.strftime("%d/%m/%Y %H:%M:%S") }}</td>
-              <td class="nowrap">{{ mov.protocol }}</td>
-              <td>{{ mov.description or '' }}</td>
-              <td class="{% if mov.type == 'Entrada' %}entrada{% else %}saida{% endif %}"> {% if mov.type == "Entrada" %} 📥 Entrada {% else %} 📤 Saída {% endif %} </td>
-              <td>{{ mov.location }}</td> 
-              <td>{{ mov.note or '' }}</td> 
-              <td>{{ mov.user }}</td> 
-            </tr>
-            {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  {% else %}
-    <p>Nenhuma movimentação registrada.</p>
-  {% endif %}
+    <label for="tipo">Tipo:</label>
+    <select name="tipo" id="tipo">
+      <option value="" {% if not request.args.get('tipo') %}selected{% endif %}>Todos</option>
+      <option value="entrada" {% if request.args.get('tipo') == 'entrada' %}selected{% endif %}>Entrada</option>
+      <option value="saida" {% if request.args.get('tipo') == 'saida' %}selected{% endif %}>Saída</option>
+    </select>
+
+    <label for="data_inicio">De:</label>
+    <input type="date" name="data_inicio" id="data_inicio" value="{{ request.args.get('data_inicio', '') }}">
+
+    <label for="data_fim">Até:</label>
+    <input type="date" name="data_fim" id="data_fim" value="{{ request.args.get('data_fim', '') }}">
+
+    <button type="submit">Filtrar</button>
+  </form>
+
+  <!-- Tabela de movimentações -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Protocolo</th>
+          <th>Descrição</th>
+          <th>Usuário</th>
+          <th>Tipo</th>
+          <th>Data</th>
+          <th>Status</th>
+          <th class="col-actions">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in movements %}
+        <tr>
+          <td>{{ item.protocol }}</td>
+          <td>{{ item.description }}</td>
+          <td>{{ item.usuario }}</td>
+          <td class="{{ item.tipo }}">{{ item.tipo|capitalize }}</td>
+          <td>
+            {% if item.created_at %}
+              {{ item.created_at.strftime('%d/%m/%Y') }}
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td>{{ item.status }}</td>
+          <td class="col-actions">
+            {% if item.status != "Finalizado" %}
+              <a href="{{ url_for('exit_item', protocol=item.protocol) }}" class="btn-out">
+                <i class="fa-solid fa-box-arrow-right"></i> Registrar Saída
+              </a>
+            {% else %}
+              <a class="btn-secondary" aria-disabled="true">
+                <i class="fa-solid fa-check"></i> Finalizado
+              </a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
 </section>
 {% endblock %}

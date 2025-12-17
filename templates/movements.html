@@ -16,7 +16,13 @@
                 <td>{{ m.type }}</td>
                 <td>{{ m.location }}</td>
                 <td>{{ m.note }}</td>
-                <td>{{ m.created_at }}</td>
+                <td>
+                  {% if m.created_at %}
+                    {{ m.created_at.strftime('%d/%m/%Y %H:%M') }}
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </table>
