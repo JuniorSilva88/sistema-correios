@@ -34,49 +34,68 @@
 
   <!-- Tabela de movimentações -->
   <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>Protocolo</th>
-          <th>Descrição</th>
-          <th>Usuário</th>
-          <th>Tipo</th>
-          <th>Data</th>
-          <th>Status</th>
-          <th class="col-actions">Ações</th>
-        </tr>
-      </thead>
-      <tbody>
+    
+  <table>
+    <thead>
+      <tr>
+        <th>Protocolo</th>
+        <th>Descrição</th>
+        <th>Usuário</th>
+        <th>Tipo</th>
+        <th>Data</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+
+   <tbody>
+      {% if movements and movements|length > 0 %}
         {% for item in movements %}
         <tr>
           <td>{{ item.protocol }}</td>
           <td>{{ item.description }}</td>
-          <td>{{ item.usuario }}</td>
-          <td class="{{ item.tipo }}">{{ item.tipo|capitalize }}</td>
           <td>
-            {% if item.created_at %}
-              {{ item.created_at.strftime('%d/%m/%Y') }}
+            {% if item.usuario == "admin" %}
+              👑 {{ item.usuario }}
+            {% else %}
+              👤 {{ item.usuario }}
+            {% endif %}
+          </td>
+          <td>
+            {% if item.tipo == "Entrada" %}
+              📥 {{ item.tipo }}
+            {% elif item.tipo == "Saída" %}
+              📤 {{ item.tipo }}
+            {% else %}
+              {{ item.tipo }}
+            {% endif %}
+          </td>
+          <td>
+            {% if item.data %}
+              {{ item.data.strftime('%d/%m/%Y') }}
             {% else %}
               -
             {% endif %}
           </td>
-          <td>{{ item.status }}</td>
-          <td class="col-actions">
-            {% if item.status != "Finalizado" %}
-              <a href="{{ url_for('exit_item', protocol=item.protocol) }}" class="btn-out">
-                <i class="fa-solid fa-box-arrow-right"></i> Registrar Saída
-              </a>
+          <td>
+            {% if item.status == "Finalizado" %}
+              <span style="color:green;">✔</span> {{ item.status }}
             {% else %}
-              <a class="btn-secondary" aria-disabled="true">
-                <i class="fa-solid fa-check"></i> Finalizado
-              </a>
+              {{ item.status }}
             {% endif %}
           </td>
         </tr>
         {% endfor %}
-      </tbody>
+      {% else %}
+        <tr>
+          <td colspan="6" style="text-align:center; color:gray;">
+            Nenhum dado exibido. Use os filtros acima.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
 
-    </table>
-  </div>
+  </table>
+</div>
+
 </section>
 {% endblock %}

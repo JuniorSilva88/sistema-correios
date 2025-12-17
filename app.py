@@ -177,27 +177,39 @@ def create_admin():
 def movimentacoes():
     query = Movement.query
 
-    # filtro por usuário
-    user_filter = request.args.get("user")
-    if user_filter:
-        query = query.filter_by(user=user_filter)
+    # pega filtros
+    user_filter = request.args.get("usuario")
+    type_filter = request.args.get("tipo")
+    start = request.args.get("data_inicio")
+    end = request.args.get("data_fim")
 
-    # filtro por tipo
-    type_filter = request.args.get("type")
-    if type_filter:
-        query = query.filter_by(type=type_filter)
+    movements = []  # começa vazio
 
-    # filtro por período
-    start = request.args.get("start")
-    end = request.args.get("end")
-    if start:
-        query = query.filter(Movement.created_at >= start)
-    if end:
-        query = query.filter(Movement.created_at <= end)
+    # só busca se algum filtro foi aplicado
+    if user_filter or type_filter or start or end:
+        if user_filter:
+            query = query.filter(Movement.user == user_filter)
 
-    movements = query.order_by(Movement.created_at.desc()).all()
-    users = User.query.all()  # para popular o select
+        if type_filter:
+            query = query.filter(Movement.type.ilike(type_filter))
 
+        if start:
+            query = query.filter(Movement.created_at >= start)
+        if end:
+            query = query.filter(Movement.created_at <= end)
+
+        movements = query.order_by(Movement.created_at.desc()).all()
+
+        # enriquecer com dados do Item
+        for m in movements:
+            item = Item.query.filter_by(protocol=m.protocol).first()
+            m.description = item.description if item else ""
+            m.status = item.status if item else ""
+            m.usuario = m.user
+            m.tipo = m.type
+            m.data = m.created_at
+
+    users = [u[0] for u in db.session.query(Movement.user).distinct().all()]
     return render_template("movimentacoes.html", movements=movements, users=users)
 
 
