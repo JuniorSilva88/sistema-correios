@@ -36,27 +36,26 @@ Funcionalidades principais: cadastro de itens, movimentações (entradas/saídas
 
 ## 📊 Tabela Resumida
 
-| Área           | Melhoria                                                                 | Status | Observações                                                                 |
-|----------------|--------------------------------------------------------------------------|--------|------------------------------------------------------------------------------|
-| Funcionalidade | **Filtros em movimentações por usuário, tipo e período**                 | ✔️     | Corrigido no backend e template; só exibe dados após FILTRAR                 |
-| Funcionalidade | **Campo "Usuário" na tabela de movimentações**                           | ✔️     | Exibição com ícones 👑 admin / 👤 usuário                                    |
-| Funcionalidade | **Campo "Tipo" na tabela de movimentações**                              | ✔️     | Exibição com ícones 📥 Entrada / 📤 Saída                                    |
-| Funcionalidade | **Campo "Status" na tabela de movimentações**                            | ✔️     | Exibição com ✔ verde para Finalizado                                         |
-| Funcionalidade | **Remoção da coluna "Ações" da página de movimentações**                 | ✔️     | Agora só existe em Itens cadastrados                                         |
-| Funcionalidade | Busca avançada por protocolo, remetente, destinatário ou descrição       | ⏳     | Planejado com query dinâmica no SQLAlchemy                                   |
-| Funcionalidade | Histórico detalhado de cada item                                         | ⏳     | Planejado: criar tabela de log de movimentações                              |
-| Interface      | **Padronização completa dos botões (verde, vermelho, azul, cinza)**      | ✔️     | Implementado em `style.css`                                                  |
-| Interface      | **Botão "Registrar Saída" padronizado (fundo escuro, letras verdes)**    | ✔️     | Ajustado em `index.html`                                                     |
-| Interface      | **Ícones visuais aplicados (👑, 👤, 📥, 📤, ✔)**                          | ✔️     | Implementados diretamente no template `movimentacoes.html`                   |
-| Interface      | Responsividade total para celular/tablet                                 | ⏳     | Ajustar CSS com media queries                                                |
-| Interface      | Feedback visual (animação/destaque ao registrar ação)                    | ⏳     | Usar CSS transitions ou JS                                                   |
-| Segurança      | Autenticação por níveis (admin, usuário comum)                           | ✔️     | Implementado com `role` no modelo `User` e decorador `@admin_required`       |
-| Segurança      | Logs de auditoria (quem fez cada ação)                                   | ✔️     | Campo `user` incluído em `Movement`                                          |
-| Segurança      | Backup automático do banco                                               | ⏳     | Planejado com script cron ou integração externa                              |
-| Documentação   | **README atualizado com instruções claras e seção "Como acessar"**       | ✔️     | Inclui links para init e dashboard                                           |
-| Documentação   | **CHANGELOG.md inicial criado**                                          | ✔️     | Versão 1.1.0 documentando filtros, CSS e ícones visuais                      |
-| Documentação   | Guia rápido de uso (fluxo: cadastrar → saída → relatório)                | ⏳     | Adicionar no README                                                          |
-| Documentação   | RELATORIO.md consolidando evolução                                       | ✔️     | Atualizado com todas as melhorias                                            |
+| Área            | Melhoria                                                   | Status | Observações                                                                 |
+|-----------------|------------------------------------------------------------|--------|------------------------------------------------------------------------------|
+| Funcionalidade  | Filtros em movimentações por usuário, tipo e período        | ✔️     | Implementados no formulário de filtros (usuario, tipo, data início/fim)      |
+| Funcionalidade  | Campo "Usuário" na tabela de movimentações                  | ✔️     | Exibição com ícones 👑 admin / 👤 usuário                                    |
+| Funcionalidade  | Campo "Tipo" na tabela de movimentações                     | ✔️     | Exibição com ícones 📥 Entrada / 📤 Saída                                    |
+| Funcionalidade  | Campo "Status" na tabela de movimentações                   | ✔️     | Exibição com ✔ verde para Finalizado                                         |
+| Funcionalidade  | Coluna "Histórico" adicionada                               | ✔️     | Link para detalhes do item em nova página                                    |
+| Funcionalidade  | Remoção da coluna "Ações" da página de movimentações        | ✔️     | Agora só existe em Itens cadastrados                                         |
+| Funcionalidade  | Relatório com filtros de período e destinatário             | ✔️     | Exportação CSV e impressão via botão                                         |
+| Funcionalidade  | Histórico detalhado de cada item                            | ✔️     | Página dedicada mostrando movimentações e detalhes                           |
+| Interface       | Padronização completa dos botões (verde, vermelho, azul, cinza) | ✔️     | Implementado em style.css com variáveis CSS                                  |
+| Interface       | Ícones visuais aplicados (👑, 👤, 📥, 📤, ✔)                 | ✔️     | Implementados diretamente nos templates                                      |
+| Interface       | Feedback visual (mensagens claras quando não há dados)      | ✔️     | Mensagens de "Nenhum dado exibido" e "Nenhuma movimentação registrada"       |
+| Segurança       | Autenticação por níveis (admin, usuário comum)              | ✔️     | Implementado no backend com role e decorador @admin_required                 |
+| Segurança       | Logs de auditoria (quem fez cada ação)                      | ✔️     | Campo user incluído em Movement                                              |
+| Segurança       | Backup automático do banco                                  | ✔️     | Implementado com script `backup.py` e agendamento via cron                   |
+| Documentação    | README atualizado com guia rápido de uso                    | ✔️     | Inclui fluxo cadastrar → saída → relatório                                   |
+| Documentação    | CHANGELOG.md inicial criado                                 | ✔️     | Versão 1.1.0 documentando filtros, CSS e ícones visuais                      |
+| Documentação    | RELATORIO.md consolidando evolução                          | ✔️     | Atualizado com todas as melhorias                                            |
+
 
 ---
 
