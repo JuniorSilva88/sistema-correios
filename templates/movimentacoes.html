@@ -40,6 +40,7 @@
       <tr>
         <th>Protocolo</th>
         <th>Descrição</th>
+        <th>Destinatário</th>
         <th>Usuário</th>
         <th>Tipo</th>
         <th>Data</th>
@@ -53,6 +54,7 @@
         <tr>
           <td>{{ item.protocol }}</td>
           <td>{{ item.description }}</td>
+          <td>{{ item.destinatario }}</td>
           <td>
             {% if item.usuario == "admin" %}
               👑 {{ item.usuario }}

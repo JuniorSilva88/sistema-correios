@@ -204,6 +204,7 @@ def movimentacoes():
         for m in movements:
             item = Item.query.filter_by(protocol=m.protocol).first()
             m.description = item.description if item else ""
+            m.destinatario = item.recipient if item else ""
             m.status = item.status if item else ""
             m.usuario = m.user
             m.tipo = m.type

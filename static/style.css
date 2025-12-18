@@ -274,3 +274,63 @@ tr:nth-child(even) { background-color: #1c2536; }
     gap: 4px;
   }
 }
+
+/* ... todo o seu CSS existente ... */
+
+/* === Ajustes extras de responsividade e feedback visual === */
+
+/* Destaque ao clicar em botões */
+button:active,
+.btn-primary:active,
+.btn-secondary:active,
+a.btn-out:active,
+a.btn-in:active,
+a.btn-info:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
+
+/* Animação de destaque em linhas recém-adicionadas/atualizadas */
+tr.highlight {
+  animation: flashRow 1s ease-in-out;
+}
+
+@keyframes flashRow {
+  0%   { background-color: #16a34a33; }
+  50%  { background-color: #16a34a66; }
+  100% { background-color: inherit; }
+}
+
+/* Ajuste para telas muito pequenas (até 480px) */
+@media (max-width: 480px) {
+  nav {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-card {
+    padding: 20px;
+    margin: 20px auto;
+  }
+
+  .form-card h2 {
+    font-size: 1.4rem;
+  }
+
+  button,
+  .btn-primary, .btn-secondary,
+  a.btn-primary, a.btn-secondary,
+  a.btn-out, a.btn-in, a.btn-info {
+    width: 100%;
+    text-align: center;
+  }
+
+  table {
+    font-size: 0.8rem;
+  }
+}
