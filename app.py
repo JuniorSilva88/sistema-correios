@@ -175,43 +175,75 @@ def create_admin():
 @app.route("/movimentacoes")
 @login_required
 def movimentacoes():
-    query = Movement.query
+    # Base: começa com Movement e faz join com Item para permitir filtros por campos do Item
+    query = db.session.query(Movement).join(Item, Movement.protocol == Item.protocol)
 
-    # pega filtros
+    # Filtros existentes (mantidos)
     user_filter = request.args.get("usuario")
     type_filter = request.args.get("tipo")
     start = request.args.get("data_inicio")
     end = request.args.get("data_fim")
 
-    movements = []  # começa vazio
+    # NOVO: termo de busca livre (protocolo, remetente, destinatário, descrição)
+    q = request.args.get("q")
 
-    # só busca se algum filtro foi aplicado
-    if user_filter or type_filter or start or end:
+    movements = []  # começa vazio para só exibir após ação (FILTRAR ou busca)
+
+    # Só busca se houver pelo menos um filtro aplicado ou termo de busca
+    if user_filter or type_filter or start or end or q:
+        # ===== Filtros existentes =====
         if user_filter:
             query = query.filter(Movement.user == user_filter)
 
         if type_filter:
+            # Aceita 'entrada'/'saida' do select e compara com valores de Movement.type
             query = query.filter(Movement.type.ilike(type_filter))
 
         if start:
-            query = query.filter(Movement.created_at >= start)
-        if end:
-            query = query.filter(Movement.created_at <= end)
+            # Converte start para datetime para comparação correta
+            try:
+                start_dt = datetime.strptime(start, "%Y-%m-%d")
+                query = query.filter(Movement.created_at >= start_dt)
+            except ValueError:
+                pass  # ignora formato inválido
 
+        if end:
+            # Inclui fim do dia para capturar registros do dia inteiro
+            try:
+                end_dt = datetime.strptime(end, "%Y-%m-%d")
+                end_dt = end_dt.replace(hour=23, minute=59, second=59)
+                query = query.filter(Movement.created_at <= end_dt)
+            except ValueError:
+                pass  # ignora formato inválido
+
+        # ===== NOVO: Busca avançada =====
+        if q:
+            like_q = f"%{q}%"
+            query = query.filter(
+                (Item.protocol.ilike(like_q)) |
+                (Item.sender.ilike(like_q)) |
+                (Item.recipient.ilike(like_q)) |
+                (Item.description.ilike(like_q))
+            )
+
+        # Ordenação por mais recente
         movements = query.order_by(Movement.created_at.desc()).all()
 
-        # enriquecer com dados do Item
+        # Enriquecimento de dados para o template (inclui Destinatário)
         for m in movements:
             item = Item.query.filter_by(protocol=m.protocol).first()
             m.description = item.description if item else ""
-            m.destinatario = item.recipient if item else ""
+            m.destinatario = item.recipient if item else ""  # NOVO: destinatário para a coluna
             m.status = item.status if item else ""
             m.usuario = m.user
             m.tipo = m.type
             m.data = m.created_at
 
+    # Lista de usuários para o select de filtro
     users = [u[0] for u in db.session.query(Movement.user).distinct().all()]
+
     return render_template("movimentacoes.html", movements=movements, users=users)
+
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -353,11 +385,17 @@ def report():
             start_dt = datetime.strptime(start_date, "%Y-%m-%d")
             end_dt = datetime.strptime(end_date, "%Y-%m-%d")
             end_dt = end_dt.replace(hour=23, minute=59, second=59)
-
-            # Apenas itens com fechamento dentro do intervalo
             query = query.filter(Item.closed.between(start_dt, end_dt))
 
-        filtered = query.all()
+        items = query.all()
+
+        # Enriquecer cada item com o usuário da última movimentação
+        for item in items:
+            last_move = Movement.query.filter_by(protocol=item.protocol)\
+                                      .order_by(Movement.created_at.desc())\
+                                      .first()
+            item.usuario = last_move.user if last_move else "-"
+        filtered = items
 
     recipients = [r[0] for r in db.session.query(Item.recipient).distinct().all()]
     recipients.insert(0, "Todos")
@@ -379,16 +417,19 @@ def report_csv():
         start_dt = datetime.strptime(start_date, "%Y-%m-%d")
         end_dt = datetime.strptime(end_date, "%Y-%m-%d")
         end_dt = end_dt.replace(hour=23, minute=59, second=59)
-
-        # Apenas itens com fechamento dentro do intervalo
         query = query.filter(Item.closed.between(start_dt, end_dt))
 
     items = query.all()
 
-    lines = ["Protocolo,Descrição,Status,Remetente,Destinatário,Fechamento"]
+    # Cabeçalho atualizado com Usuário
+    lines = ["Protocolo,Descrição,Status,Remetente,Destinatário,Usuário,Fechamento"]
     for item in items:
+        last_move = Movement.query.filter_by(protocol=item.protocol)\
+                                  .order_by(Movement.created_at.desc())\
+                                  .first()
+        usuario = last_move.user if last_move else ""
         closed = item.closed.strftime("%Y-%m-%d %H:%M:%S") if item.closed else ""
-        lines.append(f"{item.protocol},{item.description},{item.status},{item.sender},{item.recipient},{closed}")
+        lines.append(f"{item.protocol},{item.description},{item.status},{item.sender},{item.recipient},{usuario},{closed}")
 
     csv_data = "\n".join(lines)
     return Response(
