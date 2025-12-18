@@ -41,42 +41,68 @@
 
   <h3>Resultado</h3>
   {% if items and items|length > 0 %}
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>Protocolo</th>
-          <th>Descrição</th>
-          <th>Status</th>
-          <th>Remetente</th>
-          <th>Destinatário</th>
-          <th>Fechamento</th>
-          {% if current_user.username == "admin" %}
-            <th>Usuário</th>
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Protocolo</th>
+        <th>Descrição</th>
+        <th>Destinatário</th>
+        <th>Usuário</th>
+        <th>Tipo</th>
+        <th>Data</th>
+        <th>Status</th>
+        <th>Histórico</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.protocol }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.destinatario }}</td>
+        <td>
+          {% if item.usuario == "admin" %}
+            👑 {{ item.usuario }}
+          {% else %}
+            👤 {{ item.usuario }}
           {% endif %}
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in items %}
-        <tr>
-          <td class="nowrap">{{ item.protocol }}</td>
-          <td>{{ item.description }}</td>
-          <td class="nowrap">{{ item.status }}</td>
-          <td>{{ item.sender }}</td>
-          <td>{{ item.recipient }}</td>
-          <td class="nowrap">
-            {% if item.closed %}
-              {{ item.closed.strftime("%d/%m/%Y %H:%M:%S") }}
-            {% endif %}
-          </td>
-          {% if current_user.username == "admin" %}
-            <td>{{ item.usuario }}</td>
+        </td>
+        <td>
+          {% if item.tipo == "Entrada" %}
+            📥 {{ item.tipo }}
+          {% elif item.tipo == "Saída" %}
+            📤 {{ item.tipo }}
+          {% else %}
+            {{ item.tipo }}
           {% endif %}
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+        </td>
+        <td>
+          {% if item.data %}
+            {{ item.data.strftime('%d/%m/%Y') }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
+        <td>
+          {% if item.status == "Finalizado" %}
+            <span style="color:green;">✔</span> {{ item.status }}
+          {% else %}
+            {{ item.status }}
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('item_history', protocol=item.protocol) }}" class="btn-info" target="_blank">
+            Histórico
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
   {% else %}
     <p>Nenhum resultado encontrado. Preencha os filtros e clique em Gerar.</p>
   {% endif %}

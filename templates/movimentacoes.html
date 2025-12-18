@@ -45,6 +45,7 @@
         <th>Tipo</th>
         <th>Data</th>
         <th>Status</th>
+        <th>Histórico</th>
       </tr>
     </thead>
 
@@ -84,6 +85,11 @@
             {% else %}
               {{ item.status }}
             {% endif %}
+          </td>
+          <td>
+            <a href="{{ url_for('item_history', protocol=item.protocol) }}" class="btn-info" target="_blank">
+              Histórico
+            </a>
           </td>
         </tr>
         {% endfor %}

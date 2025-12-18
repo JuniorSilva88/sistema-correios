@@ -122,7 +122,6 @@ def new_item():
 
     return render_template("new_item.html")
 
-
 @app.route("/exit_item/<protocol>", methods=["GET", "POST"])
 @login_required
 def exit_item(protocol):
@@ -154,7 +153,6 @@ def exit_item(protocol):
 
     return render_template("exit_item.html", item=item)
 
-
 @app.route("/create_admin")
 def create_admin():
     # verifica se já existe admin
@@ -170,7 +168,6 @@ def create_admin():
     db.session.commit()
 
     return "✅ Usuário admin criado com sucesso! Login: admin / Senha: 1234"
-
 
 @app.route("/movimentacoes")
 @login_required
@@ -243,8 +240,6 @@ def movimentacoes():
     users = [u[0] for u in db.session.query(Movement.user).distinct().all()]
 
     return render_template("movimentacoes.html", movements=movements, users=users)
-
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -358,7 +353,6 @@ def reset_password(user_id):
         return redirect(url_for("login"))
     return render_template("reset_password.html", user=user)
 
-
 @app.route("/logout")
 @login_required
 def logout():
@@ -389,18 +383,23 @@ def report():
 
         items = query.all()
 
-        # Enriquecer cada item com o usuário da última movimentação
+        # Enriquecer cada item com dados da última movimentação
         for item in items:
             last_move = Movement.query.filter_by(protocol=item.protocol)\
                                       .order_by(Movement.created_at.desc())\
                                       .first()
             item.usuario = last_move.user if last_move else "-"
+            item.tipo = last_move.type if last_move else "-"
+            item.data = last_move.created_at if last_move else None
+            item.destinatario = item.recipient
+
         filtered = items
 
     recipients = [r[0] for r in db.session.query(Item.recipient).distinct().all()]
     recipients.insert(0, "Todos")
 
     return render_template("report.html", items=filtered, sections=recipients)
+
 
 @app.route("/report_csv", methods=["POST"])
 @login_required
@@ -459,6 +458,18 @@ def change_password():
             flash("Senha atual incorreta!", "error")
 
     return render_template("change_password.html")
+
+@app.route("/item_history/<protocol>")
+@login_required
+def item_history(protocol):
+    # Busca o item
+    item = Item.query.filter_by(protocol=protocol).first_or_404()
+
+    # Busca todas as movimentações relacionadas, ordenadas por data
+    movements = Movement.query.filter_by(protocol=protocol)\
+                              .order_by(Movement.created_at.desc()).all()
+
+    return render_template("item_history.html", item=item, movements=movements)
 
 # ---------------------
 # Inicialização

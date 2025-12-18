@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel-card">
+  <h2>Histórico do Item {{ item.protocol }}</h2>
+  <p><strong>Descrição:</strong> {{ item.description }}</p>
+  <p><strong>Destinatário:</strong> {{ item.recipient }}</p>
+  <p><strong>Status atual:</strong> {{ item.status }}</p>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Tipo</th>
+          <th>Usuário</th>
+          <th>Local</th>
+          <th>Observação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for move in movements %}
+        <tr>
+          <td>{{ move.created_at.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+          <td>{{ move.type }}</td>
+          <td>{{ move.user }}</td>
+          <td>{{ move.location }}</td>
+          <td>{{ move.note }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
