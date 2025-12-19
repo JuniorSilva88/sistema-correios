@@ -1,33 +1,24 @@
-  <!DOCTYPE html>
-  <html lang="pt-BR">
-  <head>
-      <meta charset="UTF-8">
-      <title>Sistema de Correios</title>
-      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  </head>
-  <body>
-  <header>
-      <h1>Sistema de Correios</h1>
-  </header>
-  
-  <nav>
-  {# Só mostra os links principais se o usuário estiver logado #}
-  {% if current_user and current_user.is_authenticated %}
-    <div class="nav-links">
-      <a href="{{ url_for('index') }}">Dashboard</a>
-      <a href="{{ url_for('new_item') }}">Cadastrar Novo Item</a>
-      <a href="{{ url_for('report') }}">Gerar Relatório</a>
-      {# >>> Só mostra o link Movimentações se o usuário estiver logado e for admin <<< #}
-  {% if current_user and current_user.is_authenticated and current_user.role == "admin" %}
-    <a href="{{ url_for('movimentacoes') }}">Movimentações</a>
-  {% endif %}
-    </div>
-  {% endif %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Correios</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
 
-  <div class="nav-right">
-    {% if current_user and current_user.is_authenticated %}
+  <body>
+    <header>
+      <div class="header-left">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      </div>
+
+      <div class="header-center">
+        <span class="logo">📦 Sistema de Correios</span>
+      </div>
+
       <div class="user-menu">
+      {% if current_user.is_authenticated %}
         <button class="user-button">
           {% if current_user.role == "admin" %}
             👑 {{ current_user.username }} ▼
@@ -40,30 +31,42 @@
           <a href="{{ url_for('change_password') }}">Alterar senha</a>
           <a href="{{ url_for('logout') }}">Sair</a>
         </div>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="btn-secondary">Login</a>
+      {% endif %}
       </div>
-    {% else %}
-      {# Usuário não logado: mostra só o botão de Login #}
-      <a href="{{ url_for('login') }}" class="btn-secondary">Login</a>
-    {% endif %}
-  </div>
-</nav>
+    </header>
 
+    <!-- Sidebar lateral -->
+    <aside class="sidebar" id="sidebar">
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('index') }}">🏠 Dashboard</a></li>
+          <li><a href="{{ url_for('new_item') }}">➕ Cadastrar Novo Item</a></li>
+          <li><a href="{{ url_for('report') }}">📊 Gerar Relatório</a></li>
+          {% if current_user.role == "admin" %}
+            <li><a href="{{ url_for('movimentacoes') }}">📦 Movimentações</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </aside>
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div class="flash-messages">
-        {% for category, message in messages %}
-          <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
-
-  <main class="content-container">
+    <main class="content-container" id="content">
       {% block content %}{% endblock %}
     </main>
-  <footer>
+
+    <script>
+      function toggleSidebar() { 
+        const sidebar = document.getElementById('sidebar'); 
+        const content = document.getElementById('content'); 
+
+        sidebar.classList.toggle('closed'); 
+        content.classList.toggle('expanded'); }
+    </script>
+
+
+    <footer>
       <p>&copy; 2025 Sistema de Correios</p>
-  </footer>
+    </footer>
   </body>
-  </html>
+</html>
