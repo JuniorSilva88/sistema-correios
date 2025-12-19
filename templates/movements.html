@@ -27,7 +27,14 @@
             {% endfor %}
         </table>
         {% else %}
-            <p class="muted">Nenhuma movimentação registrada.</p>
+            <table>
+              <tr>
+                <td colspan="4" style="text-align: center; font-style: italic; color: var(--muted);">
+                  Nenhuma movimentação registrada.
+                </td>
+              </tr>
+            </table>
+
         {% endif %}
     {% else %}
         <h2>Item não encontrado</h2>
