@@ -355,10 +355,21 @@ tr:nth-child(even) { background-color: #1c2536; }
 }
 
 @media print {
-  .no-print {
-    display: none !important;
+  body * {
+    visibility: hidden;   /* esconde tudo */
+  }
+  .etiqueta, .etiqueta * {
+    visibility: visible;  /* mostra só a etiqueta */
+  }
+  .etiqueta {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80%;          /* ocupa 80% da área de impressão */
   }
 }
+
+
 
 /* ===========================
    Feedback visual extra
