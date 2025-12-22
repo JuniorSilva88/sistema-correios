@@ -40,11 +40,9 @@
 
 <script>
 function goBack() {
-  if (document.referrer) {
-    window.location.href = document.referrer;
-  } else {
-    window.location.href = "{{ url_for('report') }}";
-  }
+  window.history.back();
 }
 </script>
+
+
 {% endblock %}

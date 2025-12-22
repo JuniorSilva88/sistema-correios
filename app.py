@@ -483,13 +483,9 @@ def change_password():
 @app.route("/item_history/<protocol>")
 @login_required
 def item_history(protocol):
-    # Busca o item
     item = Item.query.filter_by(protocol=protocol).first_or_404()
-
-    # Busca todas as movimentações relacionadas, ordenadas por data
     movements = Movement.query.filter_by(protocol=protocol)\
                               .order_by(Movement.created_at.desc()).all()
-
     return render_template("item_history.html", item=item, movements=movements)
 
 
@@ -498,7 +494,12 @@ def item_history(protocol):
 def etiqueta(item_id):
     item = Item.query.get_or_404(item_id)
     barcode_path = gerar_barcode(item.protocol)
-    return render_template("etiqueta.html", item=item, barcode_path=barcode_path)
+
+    # captura filtros da query string
+    filters = request.args.to_dict()
+
+    return render_template("etiqueta.html", item=item, barcode_path=barcode_path, filters=filters)
+
 
 # ---------------------
 # Inicialização
