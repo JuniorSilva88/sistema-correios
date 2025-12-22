@@ -7,6 +7,10 @@ from functools import wraps
 from flask_migrate import Migrate
 from flask_mail import Mail, Message
 import uuid 
+import os 
+import barcode 
+from barcode.writer import ImageWriter
+from PIL import Image # opcional, mas confirma Pillow instalado
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///correios.db'
@@ -38,6 +42,23 @@ def admin_required(f):
             return redirect(url_for("index"))
         return f(*args, **kwargs)
     return decorated_function
+
+def gerar_barcode(protocolo): 
+    # Caminho absoluto para a pasta static/barcodes 
+    pasta = os.path.join(app.root_path, "static", "barcodes") 
+    os.makedirs(pasta, exist_ok=True) 
+
+    # NÃO coloque .png aqui 
+    filename = os.path.join(pasta, protocolo) 
+
+    # Gera o código de barras em PNG 
+    code128 = barcode.get("code128", protocolo, writer=ImageWriter()) 
+    code128.save(filename) 
+
+    print(f"✅ Código de barras gerado: {filename}") 
+
+    # Retorna caminho relativo para usar no template 
+    return f"barcodes/{protocolo}.png"
 
 # ---------------------------
 # Modelos
@@ -470,6 +491,14 @@ def item_history(protocol):
                               .order_by(Movement.created_at.desc()).all()
 
     return render_template("item_history.html", item=item, movements=movements)
+
+
+@app.route("/etiqueta/<int:item_id>")
+@login_required
+def etiqueta(item_id):
+    item = Item.query.get_or_404(item_id)
+    barcode_path = gerar_barcode(item.protocol)
+    return render_template("etiqueta.html", item=item, barcode_path=barcode_path)
 
 # ---------------------
 # Inicialização
