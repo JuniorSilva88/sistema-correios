@@ -41,7 +41,7 @@
     <aside class="sidebar" id="sidebar">
       <nav>
         <ul>
-          <li><a href="{{ url_for('index') }}">🏠 Dashboard</a></li>
+          <li><a href="{{ url_for('index') }}">🏠 Itens Cadastrados</a></li>
           <li><a href="{{ url_for('new_item') }}">➕ Cadastrar Novo Item</a></li>
           <li><a href="{{ url_for('report') }}">📊 Gerar Relatório</a></li>
           {% if current_user.role == "admin" %}
@@ -66,8 +66,7 @@
 
 
     <footer>
-      <p>&copy; 2025 Sistema de Correios</p>
-      <p>Projeto desenvolvido por Junior Alexandre da Silva — GitHub: <a href="https://github.com/JuniorSilva88" target="_blank">@JuniorSilva88</a></p>
+      <p>&copy; 2025 Sistema de Correios - Projeto desenvolvido por Junior Alexandre da Silva — GitHub: <a href="https://github.com/JuniorSilva88" target="_blank">@JuniorSilva88</a></p>
     </footer>
 
   </body>
