@@ -12,6 +12,8 @@
 - Adicionados botões padronizados para **Gerar**, **Exportar CSV** e **Imprimir resultado**
 - Página de histórico detalhado de item criada com tabela de movimentações
 - Mensagens claras quando não há dados ou item não encontrado
+- Etiqueta com botão **Voltar** usando `window.history.back()`
+- Etiqueta pronta para impressão (CSS `@media print`, centralizada na página)
 
 ### Interface
 - Padronização completa dos botões (verde, vermelho, azul, cinza) com variáveis CSS
@@ -45,3 +47,18 @@
 
 ### Documentação
 - CHANGELOG.md inicial criado
+
+---
+
+## [1.3.0] - Planejado
+### Funcionalidades
+- 📊 Dashboard de estatísticas: gráficos de movimentações por período, status e usuários
+- 🔍 Busca avançada: pesquisa por múltiplos campos (remetente, destinatário, descrição)
+- 🗂️ Relatórios gráficos: visualização de entradas/saídas em formato de gráfico de barras/linhas
+- 🔔 Alertas automáticos: notificações para itens próximos do prazo de saída
+
+### Interface
+- 🌐 Melhorias na interface: responsividade total para dispositivos móveis
+
+### Segurança
+- 🛡️ Segurança extra: autenticação em dois fatores (2FA) para administradores
