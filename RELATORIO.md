@@ -59,12 +59,20 @@ Funcionalidades principais: cadastro de itens, movimentações (entradas/saídas
 | Documentação    | README atualizado com guia rápido de uso                    | ✔️     | Inclui fluxo cadastrar → saída → relatório                                   |
 | Documentação    | CHANGELOG.md inicial criado                                | ✔️     | Versão 1.1.0 documentando filtros, CSS e ícones visuais                      |
 | Documentação    | RELATORIO.md consolidando evolução                          | ✔️     | Atualizado com todas as melhorias                                            |
+| Funcionalidade  | 📊 Dashboard de estatísticas                                | 🚧     | Gráficos de movimentações por período, status e usuários (planejado v1.2.0) |
+| Funcionalidade  | 🔍 Busca avançada                                          | 🚧     | Pesquisa por múltiplos campos (remetente, destinatário, descrição)           |
+| Funcionalidade  | 🗂️ Relatórios gráficos                                     | 🚧     | Visualização de entradas/saídas em formato de gráfico de barras/linhas       |
+| Funcionalidade  | 🔔 Alertas automáticos                                     | 🚧     | Notificações para itens próximos do prazo de saída                           |
+| Interface       | 🌐 Melhorias na interface                                  | 🚧     | Responsividade total para dispositivos móveis                                |
+| Segurança       | 🛡️ Segurança extra                                         | 🚧     | Autenticação em dois fatores (2FA) para administradores                      |
 
 ---
 
 ## 📌 Versão Atual
 **v1.1.0** — Inclui filtros avançados, padronização visual, histórico detalhado, melhorias de segurança e etiqueta pronta para impressão.
 
+## 🚀 Próximos Passos
+**v1.2.0** — Planejados: dashboard de estatísticas, busca avançada, relatórios gráficos, alertas automáticos, responsividade mobile e 2FA para administradores.
 
 ---
 
