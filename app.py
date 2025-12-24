@@ -43,21 +43,21 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def gerar_barcode(protocolo): 
+def gerar_barcode(protocolo):
     # Caminho absoluto para a pasta static/barcodes 
-    pasta = os.path.join(app.root_path, "static", "barcodes") 
-    os.makedirs(pasta, exist_ok=True) 
+    pasta = os.path.join(app.root_path, "static", "barcodes")
+    os.makedirs(pasta, exist_ok=True)
 
-    # NÃO coloque .png aqui 
-    filename = os.path.join(pasta, protocolo) 
+    # NÃO coloque .png aqui, o writer já adiciona
+    filename = os.path.join(pasta, protocolo)
 
-    # Gera o código de barras em PNG 
-    code128 = barcode.get("code128", protocolo, writer=ImageWriter()) 
-    code128.save(filename) 
+    # Gera o código de barras em PNG
+    code128 = barcode.get("code128", protocolo, writer=ImageWriter())
+    code128.save(filename)
 
-    print(f"✅ Código de barras gerado: {filename}") 
+    print(f"✅ Código de barras gerado: {filename}.png")
 
-    # Retorna caminho relativo para usar no template 
+    # Retorna caminho relativo correto para usar no template
     return f"barcodes/{protocolo}.png"
 
 # ---------------------------

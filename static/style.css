@@ -407,19 +407,35 @@ tr:nth-child(even) { background-color: #1c2536; }
 /* ===========================
    13. Impressão otimizada
    =========================== */
-@media print { 
-  body * { display: none; }
-  .etiqueta, .etiqueta * { display: block; }
-  .etiqueta { 
-    position: absolute; 
-    left: 50%; 
-    top: 50%; 
-    transform: translate(-50%, -50%); 
-    width: auto; 
-    margin: 0 auto; 
-    text-align: center; 
-  } 
+@media print {
+  header, footer, .sidebar, .no-print {
+    display: none !important;   /* esconde cabeçalho, rodapé, sidebar e botões */
+  }
+
+  .etiqueta, .etiqueta * {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  /* Força exibição das imagens na etiqueta */
+  .etiqueta img {
+    display: block !important;
+    visibility: visible !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .etiqueta {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    margin: 0 auto;
+    text-align: center;
+  }
 }
+
 
 /* ===========================
    14. Feedback visual extra
