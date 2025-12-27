@@ -1,64 +1,43 @@
-# 📑 CHANGELOG
+# 📌 CHANGELOG — Sistema Correios
 
-## [1.2.0] - 2025-12-19
-### Funcionalidades
-- Adicionados filtros completos em movimentações (usuário, tipo e período)
-- Incluídos campos extras na tabela de movimentações:
-  - Usuário (👑 admin / 👤 usuário)
-  - Tipo (📥 Entrada / 📤 Saída)
-  - Status (✔ Finalizado)
-- Criada coluna **Histórico** com link para detalhes do item
-- Implementado relatório com filtros de período e destinatário
-- Adicionados botões padronizados para **Gerar**, **Exportar CSV** e **Imprimir resultado**
-- Página de histórico detalhado de item criada com tabela de movimentações
-- Mensagens claras quando não há dados ou item não encontrado
-- Etiqueta com botão **Voltar** usando `window.history.back()`
-- Etiqueta pronta para impressão (CSS `@media print`, centralizada na página)
+## [1.1.0] — 24/12/2025
+### Adicionado
+- Campo `status` no modelo **User** (`pendente`, `ativo`, `inativo`).
+- Rota `/register` para cadastro de novos usuários.
+- Rota `/validate_users` para validação de usuários pendentes.
+- Bloqueio de login para usuários não validados (`status != "ativo"`).
+- Template `register.html` com campos Nome, Telefone, Email.
+- Botão "Criar Conta" em `login.html`.
+- Template `validate_users.html` para validação de usuários.
+- Rota `/edit_user` para edição de email, função e senha.
+- Rota `/delete_user` para exclusão de usuários (exceto o próprio ADM).
+- Relatório `/report` com filtros de período e destinatário.
+- Exportação CSV em `/report_csv`.
+- Histórico detalhado de cada item em página dedicada.
+- Etiqueta pronta para impressão com CSS `@media print`.
+- Backup automático do banco via `backup.py`.
+- Documentação inicial em `README.md`, `CHANGELOG.md` e `RELATORIO.md`.
 
-### Interface
-- Padronização completa dos botões (verde, vermelho, azul, cinza) com variáveis CSS
-- Ícones visuais aplicados em movimentações (👑, 👤, 📥, 📤, ✔)
-- Feedback visual implementado:
-  - Destaque em linhas recém-adicionadas/atualizadas
-  - Mensagens de "Nenhum dado exibido" e "Nenhuma movimentação registrada"
-- Responsividade aplicada com media queries para telas menores (768px e 480px)
-
-### Segurança
-- Autenticação por níveis (admin, usuário comum) consolidada
-- Logs de auditoria registrando quem fez cada ação
-- Backup automático do banco implementado com `backup.py` e agendamento via cron
-
-### Documentação
-- README atualizado com guia rápido de uso (fluxo: cadastrar → saída → relatório)
-- Instruções de backup automático adicionadas ao README
-- RELATORIO.md consolidado com todas as melhorias
-- CHANGELOG.md atualizado para versão 1.2.0
+### Alterado
+- Usuários antigos migrados para `status="ativo"`.
+- Mensagens de feedback claras quando não há dados.
+- Padronização completa dos botões (verde, vermelho, azul, cinza).
+- Ícones visuais aplicados (👑, 👤, 📥, 📤, ✔).
 
 ---
 
-## [1.1.0] - 2025-12-15
-### Funcionalidades
-- Filtros básicos em movimentações
-- Exibição inicial de campos adicionais
-
-### Interface
-- Padronização inicial de botões
-- Ícones visuais aplicados em movimentações
-
-### Documentação
-- CHANGELOG.md inicial criado
+## [1.2.0] — Em andamento
+### Planejado
+- 📊 Dashboard de estatísticas (gráficos de movimentações por período, status e usuários).
+- 🔍 Busca avançada (remetente, destinatário, descrição).
+- 🗂️ Relatórios gráficos (entradas/saídas em barras/linhas).
+- 🔔 Alertas automáticos (notificações para itens próximos do prazo de saída).
+- 🌐 Melhorias na interface (responsividade total para dispositivos móveis).
+- 🛡️ Segurança extra (autenticação em dois fatores — 2FA — para administradores).
+- Inclusão de links no menu lateral para `/users_report` e `/validate_users`.
 
 ---
 
-## [1.3.0] - Planejado
-### Funcionalidades
-- 📊 Dashboard de estatísticas: gráficos de movimentações por período, status e usuários
-- 🔍 Busca avançada: pesquisa por múltiplos campos (remetente, destinatário, descrição)
-- 🗂️ Relatórios gráficos: visualização de entradas/saídas em formato de gráfico de barras/linhas
-- 🔔 Alertas automáticos: notificações para itens próximos do prazo de saída
-
-### Interface
-- 🌐 Melhorias na interface: responsividade total para dispositivos móveis
-
-### Segurança
-- 🛡️ Segurança extra: autenticação em dois fatores (2FA) para administradores
+## 📌 Observações
+- Versão **1.1.0** consolidou segurança e gestão de usuários com status.  
+- Versão **1.2.0** será focada em relatórios gráficos, estatísticas e segurança avançada.  
