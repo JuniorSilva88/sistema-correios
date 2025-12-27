@@ -43,6 +43,7 @@
         <th>🧑 Usuário</th>
         <th>📧 Email</th>
         <th>⚙️ Função</th>
+        <th>📌 Status</th> <!-- NOVO -->
         <th>🛠️ Ações</th>
       </tr>
     </thead>
@@ -59,6 +60,15 @@
           {% endif %}
         </td>
         <td>
+          {% if u.status == "ativo" %}
+            ✔️ Ativo
+          {% elif u.status == "pendente" %}
+            ⏳ Pendente
+          {% else %}
+            ❌ Inativo
+          {% endif %}
+        </td>
+        <td>
           <a href="{{ url_for('edit_user', user_id=u.id) }}" class="btn-secondary">✏️ Editar</a>
           <form method="post" action="{{ url_for('delete_user', user_id=u.id) }}" style="display:inline;" onsubmit="return confirm('❌ Tem certeza que deseja excluir este usuário?')">
             <button type="submit" class="btn-danger">🗑️ Excluir</button>
@@ -69,4 +79,5 @@
     </tbody>
   </table>
 </section>
+
 {% endblock %}

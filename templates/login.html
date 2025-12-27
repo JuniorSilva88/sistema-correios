@@ -18,6 +18,13 @@
     <div class="form-actions">
       <button type="submit" class="btn-primary">Entrar</button>
     </div>
+
+    <!-- ✅ NOVO: Link para cadastro --> 
+    <div class="login-register-link">
+      <p>Ainda não tem conta?</p>
+      <a href="{{ url_for('register') }}" class="btn-secondary">Criar Conta</a>
+    </div>
+    
   </form>
 </section>
 {% endblock %}

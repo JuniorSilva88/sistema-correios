@@ -13,7 +13,7 @@ from barcode.writer import ImageWriter
 from PIL import Image # opcional, mas confirma Pillow instalado
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///correios.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://junior:senha123@localhost/correios'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = "segredo"  # necessário para sessões do Flask-Login
 app.config['MAIL_SERVER'] = 'smtp.seuprovedor.com'
@@ -69,9 +69,9 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(20), default="user")  # "user" ou "admin"
+    status = db.Column(db.String(20), default="pendente")  # <<< NOVO: pendente, ativo, inativo
 
     def set_password(self, password):
-        # 🔐 usa pbkdf2:sha256 com salt e 260 mil iterações
         self.password_hash = generate_password_hash(
             password,
             method='pbkdf2:sha256',
@@ -80,6 +80,7 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
 
 
 @login_manager.user_loader
@@ -176,19 +177,22 @@ def exit_item(protocol):
 
 @app.route("/create_admin")
 def create_admin():
-    # verifica se já existe admin
     existing_admin = User.query.filter_by(username="admin").first()
     if existing_admin:
         return "⚠️ Usuário admin já existe!", 400
 
-    # cria novo admin
-    admin = User(username="admin", email="admin@dominio.com", role="admin")
-    admin.set_password("1234")  # senha padrão
-
+    admin = User(
+        username="admin",
+        email="admin@dominio.com",
+        role="admin",
+        status="ativo"  # ✅ garante acesso
+    )
+    admin.set_password("1234")
     db.session.add(admin)
     db.session.commit()
 
     return "✅ Usuário admin criado com sucesso! Login: admin / Senha: 1234"
+
 
 @app.route("/movimentacoes")
 @login_required
@@ -268,19 +272,23 @@ def login():
         login_input = request.form["username"]  # pode ser username ou email
         password = request.form["password"]
 
-        # tenta buscar por username ou email
         user = User.query.filter(
             (User.username == login_input) | (User.email == login_input)
         ).first()
 
         if user and user.check_password(password):
-            login_user(user, remember=True)  # cria sessão permanente
-            session.permanent = True         # ativa controle de expiração
+            if user.status != "ativo":   # <<< BLOQUEIO
+                flash("⚠️ Usuário ainda não aprovado pelo administrador.", "error")
+                return redirect(url_for("login"))
+
+            login_user(user, remember=True)
+            session.permanent = True
             return redirect(url_for("index"))
         else:
             flash("Usuário/e-mail ou senha inválidos", "error")
 
     return render_template("login.html")
+
 
 @app.route("/create_user", methods=["GET", "POST"])
 @admin_required
@@ -309,6 +317,48 @@ def create_user():
 
     users = User.query.all()
     return render_template("create_user.html", users=users)
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form["username"]
+        email = request.form["email"]
+        password = request.form["password"]
+
+        if User.query.filter((User.username == username) | (User.email == email)).first():
+            flash("Usuário ou e-mail já existe!", "error")
+            return redirect(url_for("register"))
+
+        user = User(username=username, email=email, role="user", status="pendente")  # <<< pendente
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+
+        flash("Cadastro realizado! Aguarde aprovação do administrador.", "success")
+        return redirect(url_for("login"))
+
+    return render_template("register.html")
+
+@app.route("/validate_users", methods=["GET", "POST"])
+@admin_required
+def validate_users():
+    if request.method == "POST":
+        user_id = request.form.get("user_id")
+        action = request.form.get("action")  # "aprovar" ou "rejeitar"
+        user = User.query.get_or_404(user_id)
+
+        if action == "aprovar":
+            user.status = "ativo"
+        elif action == "rejeitar":
+            user.status = "inativo"
+
+        db.session.commit()
+        flash("Status do usuário atualizado!", "success")
+        return redirect(url_for("validate_users"))
+
+    users = User.query.all()
+    return render_template("validate_users.html", users=users)
+
 
 @app.route("/edit_user/<int:user_id>", methods=["GET", "POST"])
 @admin_required   # <<< Apenas admin pode editar outros usuários
@@ -396,31 +446,35 @@ def report():
         if recipient and recipient != "Todos":
             query = query.filter_by(recipient=recipient)
 
-        if start_date and end_date:
-            start_dt = datetime.strptime(start_date, "%Y-%m-%d")
-            end_dt = datetime.strptime(end_date, "%Y-%m-%d")
-            end_dt = end_dt.replace(hour=23, minute=59, second=59)
-            query = query.filter(Item.closed.between(start_dt, end_dt))
-
         items = query.all()
+        result = []
 
-        # Enriquecer cada item com dados da última movimentação
         for item in items:
             last_move = Movement.query.filter_by(protocol=item.protocol)\
                                       .order_by(Movement.created_at.desc())\
                                       .first()
+
+            # Verifica se a movimentação está dentro do intervalo de datas
+            if start_date and end_date and last_move and last_move.created_at:
+                start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+                end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+                end_dt = end_dt.replace(hour=23, minute=59, second=59)
+
+                if not (start_dt <= last_move.created_at <= end_dt):
+                    continue  # pula esse item
+
             item.usuario = last_move.user if last_move else "-"
             item.tipo = last_move.type if last_move else "-"
             item.data = last_move.created_at if last_move else None
             item.destinatario = item.recipient
+            result.append(item)
 
-        filtered = items
+        filtered = result
 
     recipients = [r[0] for r in db.session.query(Item.recipient).distinct().all()]
     recipients.insert(0, "Todos")
 
     return render_template("report.html", items=filtered, sections=recipients)
-
 
 @app.route("/report_csv", methods=["POST"])
 @login_required
@@ -433,23 +487,30 @@ def report_csv():
     if recipient and recipient != "Todos":
         query = query.filter_by(recipient=recipient)
 
-    if start_date and end_date:
-        start_dt = datetime.strptime(start_date, "%Y-%m-%d")
-        end_dt = datetime.strptime(end_date, "%Y-%m-%d")
-        end_dt = end_dt.replace(hour=23, minute=59, second=59)
-        query = query.filter(Item.closed.between(start_dt, end_dt))
-
     items = query.all()
+    lines = ["Protocolo,Descrição,Status,Remetente,Destinatário,Usuário,Tipo,Data,Local,Nota"]
 
-    # Cabeçalho atualizado com Usuário
-    lines = ["Protocolo,Descrição,Status,Remetente,Destinatário,Usuário,Fechamento"]
     for item in items:
-        last_move = Movement.query.filter_by(protocol=item.protocol)\
-                                  .order_by(Movement.created_at.desc())\
-                                  .first()
-        usuario = last_move.user if last_move else ""
-        closed = item.closed.strftime("%Y-%m-%d %H:%M:%S") if item.closed else ""
-        lines.append(f"{item.protocol},{item.description},{item.status},{item.sender},{item.recipient},{usuario},{closed}")
+        # Buscar todas as movimentações do item
+        moves = Movement.query.filter_by(protocol=item.protocol).order_by(Movement.created_at.asc()).all()
+
+        for move in moves:
+            # Filtro por data usando movimentação
+            if start_date and end_date and move.created_at:
+                start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+                end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+                end_dt = end_dt.replace(hour=23, minute=59, second=59)
+
+                if not (start_dt <= move.created_at <= end_dt):
+                    continue  # pula movimentação fora do intervalo
+
+            usuario = move.user if move.user else ""
+            tipo = move.type if move.type else ""
+            data_mov = move.created_at.strftime("%Y-%m-%d %H:%M:%S") if move.created_at else ""
+            local = move.location if move.location else ""
+            nota = move.note if move.note else ""
+
+            lines.append(f"{item.protocol},{item.description},{item.status},{item.sender},{item.recipient},{usuario},{tipo},{data_mov},{local},{nota}")
 
     csv_data = "\n".join(lines)
     return Response(
@@ -457,6 +518,7 @@ def report_csv():
         mimetype="text/csv",
         headers={"Content-Disposition": "attachment;filename=relatorio.csv"}
     )
+
 
 @app.route("/profile")
 @login_required

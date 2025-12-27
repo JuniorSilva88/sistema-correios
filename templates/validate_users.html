@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-card">
+  <h2>✅ Validação de Usuários</h2>
+  <p>Lista de usuários pendentes ou já cadastrados. O administrador pode aprovar ou rejeitar.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>🧑 Usuário</th>
+        <th>📧 Email</th>
+        <th>⚙️ Função</th>
+        <th>📌 Status</th>
+        <th>🛠️ Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.username }}</td>
+        <td>{{ u.email }}</td>
+        <td>
+          {% if u.role == "admin" %}
+            👑 Admin
+          {% else %}
+            👤 Usuário
+          {% endif %}
+        </td>
+        <td>
+          {% if u.status == "ativo" %}
+            ✔️ Ativo
+          {% elif u.status == "pendente" %}
+            ⏳ Pendente
+          {% else %}
+            ❌ Inativo
+          {% endif %}
+        </td>
+        <td>
+          {% if u.status == "pendente" %}
+            <form method="post" style="display:inline;">
+              <input type="hidden" name="user_id" value="{{ u.id }}">
+              <input type="hidden" name="action" value="aprovar">
+              <button type="submit" class="btn-primary">✔️ Aprovar</button>
+            </form>
+            <form method="post" style="display:inline;">
+              <input type="hidden" name="user_id" value="{{ u.id }}">
+              <input type="hidden" name="action" value="rejeitar">
+              <button type="submit" class="btn-danger">❌ Rejeitar</button>
+            </form>
+          {% else %}
+            <span class="muted">Sem ações</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

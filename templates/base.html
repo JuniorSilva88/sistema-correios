@@ -7,67 +7,74 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
-  <body>
-    <header>
-      <div class="header-left">
-        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+<body>
+  <!-- Header limpo -->
+  <header>
+    <div class="header-left">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    </div>
+
+    <div class="header-center">
+      <span class="logo">📦 Sistema de Correios</span>
+    </div>
+  </header>
+
+  <!-- Sidebar lateral -->
+  <aside class="sidebar" id="sidebar">
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('index') }}">🏠 Itens Cadastrados</a></li>
+        <li><a href="{{ url_for('new_item') }}">➕ Cadastrar Novo Item</a></li>
+        <li><a href="{{ url_for('report') }}">📊 Gerar Relatório</a></li>
+        {% if current_user.role == "admin" %}
+          <li><a href="{{ url_for('movimentacoes') }}">📦 Movimentações</a></li>
+          <li><a href="{{ url_for('create_user') }}">👥 Gestão de Usuários</a></li>
+          <li><a href="{{ url_for('validate_users') }}">✅ Validação de Usuários</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+
+    <!-- ✅ Bloco de usuário no rodapé da sidebar -->
+    {% if current_user.is_authenticated %}
+    <div class="sidebar-user">
+      <div class="user-info">
+        {% if current_user.role == "admin" %}
+          👑 {{ current_user.username }}
+        {% else %}
+          👤 {{ current_user.username }}
+        {% endif %}
       </div>
-
-      <div class="header-center">
-        <span class="logo">📦 Sistema de Correios</span>
+      <div class="user-actions">
+        <a href="{{ url_for('profile') }}">Perfil</a>
+        <a href="{{ url_for('change_password') }}">Alterar senha</a>
+        <a href="{{ url_for('logout') }}">Sair</a>
       </div>
+    </div>
+    {% endif %}
+  </aside>
 
-      <div class="user-menu">
-      {% if current_user.is_authenticated %}
-        <button class="user-button">
-          {% if current_user.role == "admin" %}
-            👑 {{ current_user.username }} ▼
-          {% else %}
-            👤 {{ current_user.username }} ▼
-          {% endif %}
-        </button>
-        <div class="dropdown">
-          <a href="{{ url_for('profile') }}">Perfil</a>
-          <a href="{{ url_for('change_password') }}">Alterar senha</a>
-          <a href="{{ url_for('logout') }}">Sair</a>
-        </div>
-      {% else %}
-        <a href="{{ url_for('login') }}" class="btn-secondary">Login</a>
-      {% endif %}
-      </div>
-    </header>
+  <!-- Conteúdo principal -->
+  <main class="content-container" id="content">
+    {% block content %}{% endblock %}
+  </main>
 
-    <!-- Sidebar lateral -->
-    <aside class="sidebar" id="sidebar">
-      <nav>
-        <ul>
-          <li><a href="{{ url_for('index') }}">🏠 Itens Cadastrados</a></li>
-          <li><a href="{{ url_for('new_item') }}">➕ Cadastrar Novo Item</a></li>
-          <li><a href="{{ url_for('report') }}">📊 Gerar Relatório</a></li>
-          {% if current_user.role == "admin" %}
-            <li><a href="{{ url_for('movimentacoes') }}">📦 Movimentações</a></li>
-          {% endif %}
-        </ul>
-      </nav>
-    </aside>
+  <!-- Script de toggle da sidebar -->
+  <script>
+    function toggleSidebar() { 
+      const sidebar = document.getElementById('sidebar'); 
+      const content = document.getElementById('content'); 
 
-    <main class="content-container" id="content">
-      {% block content %}{% endblock %}
-    </main>
+      sidebar.classList.toggle('closed'); 
+      content.classList.toggle('expanded'); 
+    }
+  </script>
 
-    <script>
-      function toggleSidebar() { 
-        const sidebar = document.getElementById('sidebar'); 
-        const content = document.getElementById('content'); 
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Sistema de Correios - Projeto desenvolvido por Junior Alexandre da Silva — GitHub: 
+      <a href="https://github.com/JuniorSilva88" target="_blank">@JuniorSilva88</a>
+    </p>
+  </footer>
 
-        sidebar.classList.toggle('closed'); 
-        content.classList.toggle('expanded'); }
-    </script>
-
-
-    <footer>
-      <p>&copy; 2025 Sistema de Correios - Projeto desenvolvido por Junior Alexandre da Silva — GitHub: <a href="https://github.com/JuniorSilva88" target="_blank">@JuniorSilva88</a></p>
-    </footer>
-
-  </body>
+</body>
 </html>

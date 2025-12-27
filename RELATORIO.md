@@ -67,7 +67,6 @@ Funcionalidades principais: cadastro de itens, movimentações (entradas/saídas
 | Funcionalidade  | 🔍 Busca avançada                                          | 🚧     | Pesquisa por múltiplos campos (remetente, destinatário, descrição)           |
 | Funcionalidade  | 🗂️ Relatórios gráficos                                     | 🚧     | Visualização de entradas/saídas em formato de gráfico de barras/linhas       |
 | Funcionalidade  | 🔔 Alertas automáticos                                     | 🚧     | Notificações para itens próximos do prazo de saída                           |
-| Interface       | 🌐 Melhorias na interface                                  | 🚧     | Responsividade total para dispositivos móveis                                |
 | Segurança       | 🛡️ Segurança extra                                         | 🚧     | Autenticação em dois fatores (2FA) para administradores                      |
 
 ---
@@ -75,7 +74,6 @@ Funcionalidades principais: cadastro de itens, movimentações (entradas/saídas
 ## 📌 Observações finais
 - As melhorias de **cadastro com status**, **senha definida pelo usuário**, **gestão de usuários com status** e **relatório de usuários** já estão implementadas, mas não estavam refletidas na versão anterior da tabela.  
 - Próxima versão planejada (**v1.2.0**) deve focar em **dashboard estatístico**, **busca avançada**, **relatórios gráficos**, **alertas automáticos**, **responsividade mobile** e **2FA para administradores**.
-
 
 ---
 

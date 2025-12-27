@@ -1,8 +1,8 @@
-"""Estrutura inicial com campo user
+"""initial tables
 
-Revision ID: f650cda59832
+Revision ID: 6a81e3e30bc5
 Revises: 
-Create Date: 2025-12-15 10:44:33.180928
+Create Date: 2025-12-27 11:58:41.251677
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f650cda59832'
+revision = '6a81e3e30bc5'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -45,6 +45,7 @@ def upgrade():
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('password_hash', sa.String(length=200), nullable=False),
     sa.Column('role', sa.String(length=20), nullable=True),
+    sa.Column('status', sa.String(length=20), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')

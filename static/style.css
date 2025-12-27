@@ -163,16 +163,35 @@ footer a:hover { text-decoration: underline; }
    =========================== */
 .sidebar { 
   position: fixed; 
-  top: 0; left: 0; 
-  width: 220px; height: 100vh; 
+  top: 0; 
+  left: 0; 
+  width: 220px; 
+  height: calc(100vh - 40px); /* compensação para o footer */
   background-color: var(--panel); 
   padding-top: var(--header-height);
   transition: left 0.3s ease; 
   z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto;
 }
-.sidebar.closed { left: -220px; }
-.sidebar nav ul { list-style: none; padding: 0; margin: 0; }
-.sidebar nav ul li { margin: 12px 0; }
+
+.sidebar.closed { 
+  left: -220px; 
+}
+
+.sidebar nav ul { 
+  list-style: none; 
+  padding: 0; 
+  margin: 0; 
+}
+
+.sidebar nav ul li { 
+  margin: 12px 0; 
+}
+
 .sidebar nav ul li a {
   color: var(--text);
   text-decoration: none;
@@ -181,7 +200,39 @@ footer a:hover { text-decoration: underline; }
   display: block;
   border-radius: 6px;
 }
-.sidebar nav ul li a:hover { background-color: var(--border); }
+
+.sidebar nav ul li a:hover { 
+  background-color: var(--border); 
+}
+
+/* ✅ Bloco do usuário fixo no rodapé da sidebar */
+.sidebar-user {
+  margin-top: auto;
+  padding: 20px;              /* ↑ mais espaçamento interno */
+  border-top: 1px solid var(--border);
+  font-size: var(--font-sm);
+  background-color: var(--panel);
+  flex-shrink: 0;
+}
+
+.sidebar-user .user-info {
+  margin-bottom: 12px;        /* ↑ mais espaço abaixo do nome */
+  font-weight: bold;
+  color: var(--text);
+}
+
+.sidebar-user .user-actions a {
+  display: block;
+  color: var(--muted);
+  text-decoration: none;
+  margin: 6px 0;              /* ↑ mais espaço entre os links */
+  padding: 6px 0;             /* ↑ aumenta área clicável */
+}
+
+.sidebar-user .user-actions a:hover {
+  color: var(--text);
+}
+
 
 /* ===========================
    5. Conteúdo principal ajustável
@@ -286,6 +337,20 @@ a.btn-info {
 }
 a.btn-info:hover { background-color: var(--info); color: #fff; border-color: var(--info-dark); }
 [aria-disabled="true"] { pointer-events: none; opacity: 0.6; cursor: not-allowed; }
+
+/* ===========================
+   Botão de cadastro na tela de login
+   =========================== */
+.login-register-link {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.login-register-link p {
+  color: var(--muted);
+  font-size: var(--font-sm);
+  margin-bottom: 8px;
+}
 
 /* ===========================
    9. Etiquetas de entrada/saída
